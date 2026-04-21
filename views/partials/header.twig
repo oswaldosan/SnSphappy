@@ -34,8 +34,12 @@
        on the sides (intentionally NOT using `container-snz` here). #}
     <div class="w-full px-lg md:px-xl flex items-center justify-between h-20">
 
-        {# ---- Logo ---- #}
+        {# ---- Logo ----
+           Pass `href` explicitly — the `only` keyword scopes the include
+           so `site.url` (the component's fallback) isn't reachable from
+           here, which silently rendered an empty `href=""`. #}
         {% include 'components/logo.twig' with {
+            href:           site.url,
             size:           'md',
             wordmark_class: 'text-white hidden sm:block'
         } only %}

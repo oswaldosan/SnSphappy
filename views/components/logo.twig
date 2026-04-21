@@ -29,8 +29,12 @@
 {% set _wordmark_class = wordmark_class|default('text-white') %}
 {% set _wrapper_class = ['flex items-center gap-3', class|default('')]|join(' ')|trim %}
 
+{# `href` default is '/' instead of `site.url` — `site` may not be in
+   scope when the caller uses `{% include ... only %}`, which would
+   silently render an empty anchor. '/' always resolves to the site
+   root and is safe regardless of scope. Callers can still override. #}
 {% set _has_link = href is not defined or (href is defined and href is not null) %}
-{% set _href = href|default(site.url) %}
+{% set _href = href|default('/') %}
 {% set _aria = aria_label|default('Snazzy Sprocket — Home') %}
 
 {% if _has_link %}
