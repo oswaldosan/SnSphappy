@@ -1,25 +1,26 @@
 # syntax=docker/dockerfile:1.7
 #
-# Snazzy Sprocket — production image for Railway
-# ===============================================
-# Multi-stage build:
-#   1. `assets`  — builds Tailwind + Alpine bundle with Vite (Node 20).
-#   2. `vendor`  — installs PHP dependencies via Composer (no dev).
-#   3. `runtime` — official WordPress + Apache + PHP 8.2 image, with
-#                  the theme, built assets, vendor, and pinned
-#                  plugins (ACF, Contact Form 7) baked in.
+# Snazzy Sprocket — production image (Railway)
+# =============================================
+# Based on `serversideup/php` — a production-grade PHP-FPM + Nginx
+# image maintained specifically for managed container platforms
+# (Railway, Fly, DO App Platform). No mod_php, no MPM conflicts,
+# runs as non-root, healthchecks built in.
 #
-# The runtime entrypoint patches Apache to listen on Railway's
-# dynamic `$PORT` and trusts the `X-Forwarded-Proto` header from
-# the Railway edge proxy so WordPress generates https URLs.
+# Three stages:
+#   1. `assets`  — Tailwind + Alpine bundle via Vite (Node 20).
+#   2. `vendor`  — Composer install (no dev).
+#   3. `runtime` — WordPress + plugins + our theme on top of
+#                  `serversideup/php:8.2-fpm-nginx`.
+#
+# Target port: 8080 (serversideup default). In Railway, set the
+# service's public port to 8080 — no dynamic-PORT gymnastics needed.
 
 # ─── Stage 1 · Front-end assets ───────────────────────────────────
 FROM node:20-alpine AS assets
 WORKDIR /build
-
 COPY package.json package-lock.json* ./
 RUN npm ci --no-audit --no-fund
-
 COPY tailwind.config.js postcss.config.js vite.config.js ./
 COPY src ./src
 COPY views ./views
@@ -29,7 +30,6 @@ RUN npm run build
 # ─── Stage 2 · PHP dependencies ───────────────────────────────────
 FROM composer:2 AS vendor
 WORKDIR /build
-
 COPY composer.json composer.lock* ./
 RUN composer install \
         --no-dev \
@@ -38,87 +38,67 @@ RUN composer install \
         --prefer-dist
 
 # ─── Stage 3 · WordPress runtime ──────────────────────────────────
-FROM wordpress:php8.2-apache AS runtime
+FROM serversideup/php:8.2-fpm-nginx AS runtime
 
-ENV THEME_DIR=/usr/src/wordpress/wp-content/themes/snazzy-sprocket \
-    PLUGIN_DIR=/usr/src/wordpress/wp-content/plugins
+# Tell serversideup's Nginx to serve from the WP root (default is
+# `/var/www/html/public`, which doesn't match WordPress layout).
+ENV NGINX_WEBROOT=/var/www/html \
+    PHP_OPCACHE_ENABLE=1 \
+    SSL_MODE=off \
+    LOG_OUTPUT_LEVEL=info
+
+USER root
 
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y --no-install-recommends \
-        unzip \
-        curl \
-        less; \
+    apt-get install -y --no-install-recommends unzip curl less; \
     rm -rf /var/lib/apt/lists/*
 
-# WP-CLI (handy for one-off admin tasks: `docker exec <container> wp …`)
+# WP-CLI for post-deploy admin tasks (`railway run wp …`).
 RUN set -eux; \
     curl -fsSL -o /usr/local/bin/wp \
         https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
     chmod +x /usr/local/bin/wp
 
-# Pinned plugins. Update these URLs to lock specific versions on
-# release branches; `latest-stable` is fine for rolling deployments.
+# WordPress core.
+WORKDIR /var/www/html
 RUN set -eux; \
-    cd "$PLUGIN_DIR"; \
+    curl -fsSL https://wordpress.org/latest.tar.gz \
+        | tar -xzf - --strip-components=1; \
+    rm -rf wp-content/themes/* \
+           wp-content/plugins/akismet \
+           wp-content/plugins/hello.php
+
+# Plugins (pinned to `.latest-stable` — swap to exact versions for
+# strict release branches).
+RUN set -eux; \
+    cd wp-content/plugins; \
     curl -fsSL -o acf.zip https://downloads.wordpress.org/plugin/advanced-custom-fields.latest-stable.zip; \
     unzip -q acf.zip && rm acf.zip; \
     curl -fsSL -o cf7.zip https://downloads.wordpress.org/plugin/contact-form-7.latest-stable.zip; \
-    unzip -q cf7.zip && rm cf7.zip; \
-    chown -R www-data:www-data "$PLUGIN_DIR"
+    unzip -q cf7.zip && rm cf7.zip
 
-# Theme source (respects `.dockerignore`).
-COPY --chown=www-data:www-data . "$THEME_DIR"
+# Our theme (respects `.dockerignore`).
+COPY --chown=www-data:www-data . /var/www/html/wp-content/themes/snazzy-sprocket
+COPY --from=assets --chown=www-data:www-data /build/dist \
+    /var/www/html/wp-content/themes/snazzy-sprocket/dist
+COPY --from=vendor --chown=www-data:www-data /build/vendor \
+    /var/www/html/wp-content/themes/snazzy-sprocket/vendor
 
-# Built artifacts from the earlier stages.
-COPY --from=assets --chown=www-data:www-data /build/dist "$THEME_DIR/dist"
-COPY --from=vendor --chown=www-data:www-data /build/vendor "$THEME_DIR/vendor"
-
-# Drop files the container will never need.
+# Drop build-only files from inside the theme dir.
 RUN set -eux; \
-    cd "$THEME_DIR"; \
-    rm -rf \
-        Dockerfile \
-        .dockerignore \
-        .wp-env.json \
-        docker \
-        node_modules \
-        package.json \
-        package-lock.json \
-        postcss.config.js \
-        tailwind.config.js \
-        vite.config.js \
-        bin/seed.sh
+    cd /var/www/html/wp-content/themes/snazzy-sprocket; \
+    rm -rf Dockerfile .dockerignore .wp-env.json .github .gitignore \
+           docker node_modules package.json package-lock.json \
+           postcss.config.js tailwind.config.js vite.config.js \
+           bin/seed.sh README.md
 
-# Force a single MPM (mod_php needs prefork). The `wordpress:php8.2-apache`
-# base image ships with BOTH `mpm_event` and `mpm_prefork` symlinked into
-# `mods-enabled/` → Apache bails at startup with
-# `AH00534: apache2: Configuration error: More than one MPM loaded.`
-#
-# `a2dismod` is not reliable here because the base image enables the
-# modules via plain filesystem symlinks that `a2enmod/a2dismod` sometimes
-# re-create. Manage the symlinks directly and then fail the build if
-# more than one MPM remains enabled.
-RUN set -eux; \
-    rm -f /etc/apache2/mods-enabled/mpm_event.load \
-          /etc/apache2/mods-enabled/mpm_event.conf \
-          /etc/apache2/mods-enabled/mpm_worker.load \
-          /etc/apache2/mods-enabled/mpm_worker.conf; \
-    ln -sf ../mods-available/mpm_prefork.load \
-           /etc/apache2/mods-enabled/mpm_prefork.load; \
-    ln -sf ../mods-available/mpm_prefork.conf \
-           /etc/apache2/mods-enabled/mpm_prefork.conf; \
-    a2enmod rewrite headers expires; \
-    echo "---- Enabled MPM modules ----"; \
-    ls -la /etc/apache2/mods-enabled/mpm_*.load; \
-    count="$(ls /etc/apache2/mods-enabled/mpm_*.load 2>/dev/null | wc -l)"; \
-    [ "$count" = "1" ] || { echo "ERROR: expected exactly 1 MPM, got $count"; exit 1; }; \
-    apache2ctl -t
+# Custom `wp-config.php` reads DB + salts from env vars and trusts
+# Railway's TLS-terminating edge proxy.
+COPY docker/wp-config.php /var/www/html/wp-config.php
 
-COPY docker/railway-entrypoint.sh /usr/local/bin/railway-entrypoint.sh
-RUN chmod +x /usr/local/bin/railway-entrypoint.sh
+RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 80
+USER www-data
 
-ENTRYPOINT ["railway-entrypoint.sh"]
-CMD ["apache2-foreground"]
+EXPOSE 8080
