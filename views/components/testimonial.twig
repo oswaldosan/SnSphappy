@@ -1,0 +1,51 @@
+{#
+   views/components/testimonial.twig
+   -------------------------------------------------------------
+   Left-bordered pull quote. Used in case-study singles; also
+   available wherever a single-voice quote needs emphasis
+   (landing pages, homepage, about).
+
+   Semantic markup: <blockquote> + <cite>. The quote marks are
+   added by the component — `quote` should be plain text.
+
+   Params:
+     - quote    : string (required)           — quote text (no quote marks).
+     - author   : string, optional            — cited person / brand.
+     - role     : string, optional            — e.g. "CTO · Acme Corp".
+     - variant  : 'ink' | 'accent'
+                                    (default: 'ink')
+                                             — left-border color. Switch to
+                                               `accent` when the quote sits
+                                               next to a paper / muted
+                                               callout so the two don't
+                                               read identically.
+     - size     : 'md' | 'lg'       (default: 'md')
+                                             — `lg` bumps the quote body
+                                               to `text-xl md:text-2xl`
+                                               for headline-style pulls.
+     - class    : string, optional            — extra classes on the
+                                                wrapping `<blockquote>`.
+#}
+
+{% set _variant = variant|default('ink') %}
+{% set _size    = size|default('md') %}
+
+{% set _border_class = _variant == 'accent' ? 'border-accent' : 'border-ink' %}
+
+{% set _quote_class = {
+    'md': 'text-lg md:text-xl',
+    'lg': 'text-xl md:text-2xl'
+}[_size]|default('text-lg md:text-xl') %}
+
+<blockquote class="border-l-4 pl-lg {{ _border_class }} {{ class|default('') }}">
+    <p class="{{ _quote_class }} text-ink leading-relaxed">
+        &ldquo;{{ quote }}&rdquo;
+    </p>
+
+    {% if author or role %}
+        <cite class="block mt-sm text-small text-muted not-italic
+                     font-semibold uppercase tracking-[0.1em]">
+            — {{ author }}{% if author and role %} · {% endif %}{{ role }}
+        </cite>
+    {% endif %}
+</blockquote>

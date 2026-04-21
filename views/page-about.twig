@@ -1,0 +1,127 @@
+{% extends "base.twig" %}
+
+{% block meta_description %}Meet the team behind Snazzy Sprocket — a tight-knit crew of designers, developers, and strategists building digital products that matter.{% endblock %}
+
+{% block content %}
+
+    {# ============================================
+       HERO — shared `components/page-hero.twig` in its
+       narrative variant: bigger headline, soft halo,
+       accent rule before the eyebrow. The same
+       component drives the Contact / archive heroes
+       with different params.
+       ============================================ #}
+    {% include 'components/page-hero.twig' with {
+        eyebrow:       about_eyebrow,
+        heading_html:  about_headline_html,
+        lede:          about_subheadline,
+        size:          'lg',
+        halo_opacity:  'soft',
+        accent_rule:   true,
+        max_width:     'max-w-3xl'
+    } only %}
+
+    {# ============================================
+       OUR STORY — split 2-col (copy + photo)
+       ============================================ #}
+    <section class="section bg-white">
+        <div class="container-snz">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl lg:gap-2xl items-start">
+                <div class="max-w-xl">
+                    <p class="eyebrow mb-sm">{{ story_eyebrow }}</p>
+                    <h2 class="mb-lg">{{ story_headline }}</h2>
+                    <div class="prose-snz">
+                        {{ story_content|raw }}
+                    </div>
+                </div>
+
+                <div class="lg:pl-xl">
+                    {% if story_image %}
+                        <img
+                            src="{{ story_image.sizes.large|default(story_image.url) }}"
+                            alt="{{ story_image.alt|default('The Snazzy Sprocket team') }}"
+                            class="w-full h-auto block"
+                            loading="lazy"
+                        >
+                    {% else %}
+                        <div class="w-full aspect-[560/390] bg-paper border border-fog flex items-center justify-center text-muted text-small"
+                             role="img"
+                             aria-label="Team photo placeholder">
+                            Team Photo — 560 × 390
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ============================================
+       VALUES — 4 col hairline grid (reuses the service-grid motif)
+       ============================================ #}
+    <section class="section section-muted">
+        <div class="container-snz">
+            {% include 'components/section-header.twig' with {
+                eyebrow: values_eyebrow,
+                heading: values_headline,
+                center:  true
+            } only %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+                {% for value in values %}
+                    <article class="value-card">
+                        <span class="value-card__marker" aria-hidden="true">
+                            {{ '%02d'|format(loop.index) }}
+                        </span>
+                        <h3 class="value-card__title">{{ value.value_title }}</h3>
+                        <p class="value-card__copy">{{ value.value_description }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {# ============================================
+       TEAM — 5 col grid with initial-tile fallback
+       ============================================ #}
+    <section class="section bg-white" id="team">
+        <div class="container-snz">
+            {% include 'components/section-header.twig' with {
+                eyebrow: team_eyebrow,
+                heading: team_headline,
+                lede:    team_subheadline,
+                center:  true
+            } only %}
+
+            {% if team|length > 0 %}
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-lg md:gap-xl">
+                    {% for member in team %}
+                        {% include 'partials/team-member-card.twig' with { member: member } only %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {# ============================================
+       JOIN CTA — inset dark card on paper background
+       ============================================ #}
+    <section class="section-sm section-muted">
+        <div class="container-snz">
+            <div class="cta-banner py-2xl md:py-3xl px-lg md:px-xl text-center">
+                <div class="max-w-xl mx-auto">
+                    <h2 class="text-white mb-md">{{ join_headline }}</h2>
+                    {% if join_lede %}
+                        <p class="lede mb-xl">{{ join_lede }}</p>
+                    {% endif %}
+                    {% include 'components/button.twig' with {
+                        variant: 'primary',
+                        label:   join_button_label,
+                        href:    join_button_url,
+                        arrow:   true
+                    } only %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

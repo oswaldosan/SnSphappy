@@ -1,0 +1,84 @@
+{#
+   views/components/button.twig
+   ----------------------------
+   Unified button component. Maps Figma "Components → Buttons" variants to
+   the CSS classes defined in src/css/main.css so templates never have to
+   duplicate markup.
+
+   Params:
+     - label         : string, REQUIRED       — visible text
+     - href          : string  (default: '#') — destination when rendered as <a>
+     - variant       : string  (default: 'primary')
+                       one of: primary | outline | outline-on-dark
+                               ghost   | ghost-on-dark
+     - arrow         : bool    (default: true)  — show trailing arrow
+     - size          : string  (default: null)  — 'sm' | 'lg' | null
+     - target        : string  (default: null)  — e.g. '_blank'
+     - rel           : string  (default: auto)  — auto 'noopener noreferrer' on _blank
+     - class         : string  (default: '')    — extra classes on the element
+     - aria_label    : string  (default: null)
+     - as            : 'a' | 'button' (default: 'a')
+     - button_type   : 'button' | 'submit' | 'reset' (default: 'button')
+     - full_width    : bool   (default: false)  — stretches + centers content
+     - attrs         : object (default: {})     — arbitrary extra HTML/Alpine attrs
+
+   Usage:
+     {% include 'components/button.twig' with {
+         label: 'View Our Work',
+         href: site.url ~ '/case-studies',
+         variant: 'primary'
+     } only %}
+#}
+
+{% set _variants = {
+    'primary':         'btn-primary',
+    'outline':         'btn-outline',
+    'outline-on-dark': 'btn-outline-on-dark',
+    'ghost':           'btn-ghost',
+    'ghost-on-dark':   'btn-ghost btn-ghost-on-dark'
+} %}
+
+{% set _variant_key = variant|default('primary') %}
+{% set _variant_class = _variants[_variant_key]|default('btn-primary') %}
+
+{% set _size_class = {
+    'sm': 'btn-sm',
+    'lg': 'btn-lg'
+}[size|default('')]|default('') %}
+
+{% set _full = full_width|default(false) ? 'w-full justify-center' : '' %}
+{% set _show_arrow = arrow is defined ? arrow : true %}
+{% set _as = as|default('a') %}
+
+{% set _classes = [_variant_class, _size_class, _full, class|default('')]|join(' ')|trim %}
+
+{% set _attrs = attrs|default({}) %}
+
+{% if _as == 'button' %}
+    <button
+        type="{{ button_type|default('button') }}"
+        class="{{ _classes }}"
+        {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}
+        {% for key, value in _attrs %}{{ key }}="{{ value }}"{% if not loop.last %} {% endif %}{% endfor %}
+    >
+        {{ label }}
+        {% if _show_arrow %}
+            {% include 'components/icon-arrow.twig' only %}
+        {% endif %}
+    </button>
+{% else %}
+    {% set _rel = rel ?? (target|default('') == '_blank' ? 'noopener noreferrer' : null) %}
+    <a
+        href="{{ href|default('#') }}"
+        class="{{ _classes }}"
+        {% if target %}target="{{ target }}"{% endif %}
+        {% if _rel %}rel="{{ _rel }}"{% endif %}
+        {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}
+        {% for key, value in _attrs %}{{ key }}="{{ value }}"{% if not loop.last %} {% endif %}{% endfor %}
+    >
+        {{ label }}
+        {% if _show_arrow %}
+            {% include 'components/icon-arrow.twig' only %}
+        {% endif %}
+    </a>
+{% endif %}

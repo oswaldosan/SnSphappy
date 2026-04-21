@@ -1,0 +1,148 @@
+{# ===== Site Header =====
+   Dark header that floats over the hero (Figma "Hero sections: Ink").
+   Becomes solid ink + subtle border once the user scrolls, so it
+   stays legible on light sections too.
+
+   The whole thing is wrapped in a single Alpine `x-data` so the
+   mobile-menu overlay (rendered as a SIBLING of `<header>`) can
+   share the `open` state. Keeping the overlay outside the header
+   prevents the header's `backdrop-filter` stacking context from
+   swallowing it on mobile. #}
+<div
+    x-data="{
+        open: false,
+        scrolled: false,
+        init() {
+            this.scrolled = window.scrollY > 8;
+            window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 8; }, { passive: true });
+        },
+        toggle() {
+            this.open = !this.open;
+            document.body.classList.toggle('overflow-hidden', this.open);
+        },
+        close() {
+            this.open = false;
+            document.body.classList.remove('overflow-hidden');
+        }
+    }"
+>
+<header
+    class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300"
+    :class="(scrolled || open) ? 'bg-ink backdrop-blur-md border-b border-white/10' : 'bg-ink/70 backdrop-blur-sm'"
+>
+    {# Full-bleed header bar: stretches edge-to-edge, only page-padding
+       on the sides (intentionally NOT using `container-snz` here). #}
+    <div class="w-full px-lg md:px-xl flex items-center justify-between h-20">
+
+        {# ---- Logo ---- #}
+        {% include 'components/logo.twig' with {
+            size:           'md',
+            wordmark_class: 'text-white hidden sm:block'
+        } only %}
+
+        {# ---- Desktop Navigation ---- #}
+        <nav class="hidden md:flex items-center gap-xl" aria-label="Primary navigation">
+            {% if menu_primary %}
+                {% for item in menu_primary.items %}
+                    <a
+                        href="{{ item.link }}"
+                        class="nav-link nav-link-on-dark {{ item.current ? 'is-current' : '' }}"
+                        {% if item.current %}aria-current="page"{% endif %}
+                    >
+                        {{ item.title }}
+                    </a>
+                {% endfor %}
+            {% else %}
+                <a href="{{ site.url }}" class="nav-link nav-link-on-dark is-current">Home</a>
+                <a href="{{ site.url }}/about" class="nav-link nav-link-on-dark">About</a>
+                <a href="{{ site.url }}/case-studies" class="nav-link nav-link-on-dark">Case Studies</a>
+            {% endif %}
+        </nav>
+
+        {# ---- CTA + Hamburger ---- #}
+        <div class="flex items-center gap-md">
+            {% include 'components/button.twig' with {
+                label:   'Get in Touch',
+                href:    site.url ~ '/contact',
+                variant: 'primary',
+                arrow:   false,
+                class:   'hidden md:inline-flex'
+            } only %}
+
+            <button
+                class="md:hidden p-2 text-white"
+                @click="toggle()"
+                :aria-expanded="open"
+                aria-controls="mobile-menu"
+                aria-label="Toggle navigation"
+            >
+                <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg x-show="open" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+{# ---- Mobile Navigation Overlay ----
+     Rendered OUTSIDE `<header>` so the header's backdrop-filter
+     stacking context can't clip or hide it. Its own `z-40` sits
+     below the header's `z-50`, keeping the close-button accessible.
+     `top-20` leaves the header visible. The header forces `bg-ink`
+     (opaque) while `open === true`, so menu links are never read
+     through a translucent surface. #}
+    <div
+        id="mobile-menu"
+        class="hidden fixed inset-x-0 top-20 bottom-0 bg-ink z-40 overflow-y-auto md:!hidden"
+        :class="{ '!block': open }"
+    >
+        <nav class="flex flex-col p-lg" aria-label="Mobile navigation">
+            <ul class="divide-y divide-white/10">
+                {% set mobile_items = menu_primary
+                    ? menu_primary.items
+                    : [
+                        { title: 'Home',         link: site.url,                   current: true  },
+                        { title: 'About',        link: site.url ~ '/about',        current: false },
+                        { title: 'Case Studies', link: site.url ~ '/case-studies', current: false }
+                      ]
+                %}
+                {% for item in mobile_items %}
+                    <li>
+                        <a
+                            href="{{ item.link }}"
+                            class="flex items-center justify-between gap-md py-4
+                                   font-display font-extrabold text-2xl leading-tight
+                                   {{ item.current ? 'text-accent' : 'text-white' }}
+                                   active:text-accent hover:text-accent transition-colors"
+                            @click="close()"
+                        >
+                            <span>{{ item.title }}</span>
+                            <svg class="w-5 h-5 text-steel shrink-0" fill="none" stroke="currentColor"
+                                 stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" d="M9 6l6 6-6 6"/>
+                            </svg>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="mt-xl pt-lg border-t border-white/10">
+                {% include 'components/button.twig' with {
+                    label:      'Get in Touch',
+                    href:       site.url ~ '/contact',
+                    variant:    'primary',
+                    arrow:      false,
+                    full_width: true,
+                    attrs:      { '@click': 'close()' }
+                } only %}
+            </div>
+        </nav>
+    </div>
+</div>
+
+{# Spacer for fixed header — page content starts below. Hero sections use
+   `-mt-20 pt-20` to pull their dark background up behind the header. #}
+<div class="h-20"></div>

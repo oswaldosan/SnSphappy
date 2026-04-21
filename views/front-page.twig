@@ -1,0 +1,88 @@
+{% extends "base.twig" %}
+
+{% block meta_description %}Snazzy Sprocket — An award-winning digital agency engineering high-performance websites and applications.{% endblock %}
+
+{% block content %}
+
+    {# ============================================
+       HERO — ink block with stats rail.
+       ACF fields: hero_eyebrow, hero_headline_html,
+                   hero_subheadline, hero_stats[]
+       ============================================ #}
+    {% include 'components/home-hero.twig' with {
+        eyebrow:       hero_eyebrow|default('Award-winning digital agency'),
+        heading_html:  hero_headline_html,
+        lede:          hero_subheadline|default('Snazzy Sprocket crafts high-performance digital experiences for ambitious brands. Strategy, design, and engineering — all under one roof.'),
+        primary_cta:   { label: 'View Our Work',  href: site.url ~ '/case-studies' },
+        secondary_cta: { label: 'Start a Project', href: site.url ~ '/contact' },
+        stats:         hero_stats
+    } only %}
+
+    {# ============================================
+       SERVICES — Figma "Service grid: 3 cols, 2px gap"
+       ============================================ #}
+    <section class="section bg-white" id="services">
+        <div class="container-snz">
+
+            {% include 'components/section-header.twig' with {
+                eyebrow:      services_eyebrow|default('What we do'),
+                heading:      'Services built for growth',
+                heading_html: services_headline_html,
+                lede:         services_subheadline|default('From concept to launch and beyond, we deliver end-to-end digital solutions that move the needle.'),
+                size:         'lg'
+            } only %}
+
+            <div class="service-grid">
+                {% for service in services %}
+                    {% include 'components/service-card.twig' with {
+                        title:       service.service_title,
+                        description: service.service_description,
+                        marker:      service.service_marker
+                    } only %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {# ============================================
+       FEATURED CASE STUDIES — Figma "Work cards: 3 cols, 24px gap"
+       ============================================ #}
+    <section class="section section-muted" id="work">
+        <div class="container-snz">
+
+            {% include 'components/section-header.twig' with {
+                eyebrow: 'Featured work',
+                heading: 'Case studies that speak for themselves',
+                lede:    'A selection of recent projects where strategy met execution — and the results exceeded expectations.',
+                center:  true
+            } only %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                {% for study in featured_work %}
+                    {% include 'partials/case-study-card.twig' with { study: study } %}
+                {% endfor %}
+            </div>
+
+            <div class="mt-2xl text-center">
+                {% include 'components/button.twig' with {
+                    label:   'View All Case Studies',
+                    href:    site.url ~ '/case-studies',
+                    variant: 'outline'
+                } only %}
+            </div>
+        </div>
+    </section>
+
+    {# ============================================
+       CTA BANNER
+       ============================================ #}
+    {% include 'components/cta-banner.twig' with {
+        eyebrow:      cta_eyebrow|default("Let's build"),
+        heading:      'Ready to engineer something great?',
+        heading_html: cta_headline_html,
+        lede:         cta_subheadline|default('Tell us about your project. We answer every inquiry within one business day.'),
+        button_label: 'Start a Conversation',
+        button_href:  site.url ~ '/contact'
+    } only %}
+
+{% endblock %}

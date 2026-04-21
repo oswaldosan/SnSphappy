@@ -1,0 +1,451 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Alpine.js — hide any `x-cloak`-tagged element until Alpine has
+   initialized and processed its `x-show` / `x-if` state. Prevents a
+   flash of the mobile menu on load before `open === false` is applied. */
+[x-cloak] { display: none !important; }
+
+/* =============================================================
+   Snazzy Sprocket — Global styles
+   -------------------------------------------------------------
+   Tokens live in tailwind.config.js. Everything below either
+   sets sensible element defaults (base layer), exposes reusable
+   component classes (@layer components), or adds small utility
+   patterns that don't exist in Tailwind (@layer utilities).
+
+   Font families:
+     - Syne (display): headings, hero, stat numbers, logo.
+     - DM Sans (body): everything else.
+   Fonts are enqueued from StarterSite.php via Google Fonts.
+
+   Layout contract (Figma "Layout"):
+     - Max width: 1200px
+     - Horizontal padding: 24px
+     - Service grid:  3 cols / 2px gap  (hair-line grid motif)
+     - Work cards:    3 cols / 24px gap
+     - Team grid:     5 cols / 2px gap
+     - Values grid:   4 cols / 2px gap
+     - Dot grid size: 24 × 24
+   ============================================================= */
+
+/* ---------- Base ------------------------------------------------ */
+@layer base {
+  :root {
+    --notch-lg: 28px;
+    --notch-md: 16px;
+    --notch-sm: 12px;
+    --notch-xs: 8px;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  body {
+    @apply font-body text-body text-ink bg-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-extrabold text-ink;
+  }
+
+  h1 { @apply text-h1; }
+  h2 { @apply text-h2; }
+  h3 { @apply text-h3; }
+  h4 { @apply font-display text-lg font-bold tracking-tight; }
+
+  p { @apply text-body text-ink-mid; }
+
+  a {
+    @apply text-ink underline-offset-4 transition-colors duration-200;
+  }
+  a:hover { @apply text-accent-dim; }
+
+  img, svg, video { @apply max-w-full h-auto; }
+
+  ::selection {
+    background-color: theme('colors.accent.DEFAULT');
+    color: theme('colors.ink.DEFAULT');
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-white;
+  }
+  .bg-ink :focus-visible,
+  .bg-ink-light :focus-visible,
+  .bg-ink-mid :focus-visible,
+  .section-dark :focus-visible {
+    @apply ring-offset-ink;
+  }
+}
+
+/* ---------- Components ------------------------------------------ */
+@layer components {
+
+  /* ========== Layout wrappers ================================== */
+  /* Canonical 1200px container — Figma "Max width: 1200px,
+     Horizontal padding: 24px". Use everywhere. */
+  .container-snz {
+    @apply mx-auto w-full max-w-content px-lg;
+  }
+
+  /* Narrower reading column for long-form content (single posts, about). */
+  .container-narrow {
+    @apply mx-auto w-full max-w-3xl px-lg;
+  }
+
+  .section         { @apply py-2xl md:py-3xl; }
+  .section-lg      { @apply py-3xl md:py-4xl; }
+  .section-sm      { @apply py-xl md:py-2xl; }
+  .section-muted   { @apply bg-paper; }
+  .section-dark    { @apply bg-ink text-white; }
+  .section-dark h1,
+  .section-dark h2,
+  .section-dark h3,
+  .section-dark h4 { @apply text-white; }
+  .section-dark p  { @apply text-cloud; }
+
+  /* ========== Typography helpers =============================== */
+  .eyebrow {
+    @apply inline-block font-body font-semibold text-label uppercase
+           tracking-[0.18em] text-accent-dim;
+  }
+  .section-dark .eyebrow { @apply text-accent; }
+
+  .lede {
+    @apply font-body text-lg md:text-xl text-ink-mid leading-relaxed;
+  }
+  /* Contrast-safe variants when `.lede` sits on dark surfaces.
+     `text-soft` maps to #9BA3C2 (Figma "Soft"), which meets
+     WCAG AA body-size contrast against Ink (#0B0F1A). */
+  .section-dark .lede,
+  .bg-hero-dot .lede,
+  .cta-banner .lede,
+  .lede-on-dark {
+    @apply text-soft;
+  }
+
+  /* Editors can wrap a word in <em> or <strong> inside any headline
+     to highlight it in accent green. Per design, the emphasis is
+     color-only — NOT italic — so we force `font-style: normal`
+     regardless of the browser's default `<em>` rendering. */
+  .hero-headline em,
+  .hero-headline strong,
+  .bg-hero-dot :where(h1, h2, h3) em,
+  .bg-hero-dot :where(h1, h2, h3) strong,
+  .cta-banner :where(h1, h2, h3) em,
+  .cta-banner :where(h1, h2, h3) strong,
+  .section-dark :where(h1, h2, h3) em,
+  .section-dark :where(h1, h2, h3) strong {
+    @apply text-accent font-extrabold;
+    font-style: normal;
+  }
+
+  /* ========== Buttons ==========================================
+     Figma "Components → Buttons":
+       - Primary Action : solid accent rectangle, ink label, arrow.
+       - Outline Action : 2px ink border, white fill, ink label.
+       - Ghost Action   : no chrome, muted label, sentence case.
+     All buttons are sharp rectangles — NO notch, NO rounded corners.
+  ================================================================ */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+           px-lg py-3
+           font-display font-bold uppercase tracking-[0.08em]
+           text-small leading-none
+           transition-colors duration-200
+           border-0 cursor-pointer select-none
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    border-radius: 0;
+    clip-path: none;
+  }
+  .btn > .btn-arrow { @apply transition-transform duration-200; }
+  .btn:hover > .btn-arrow { transform: translateX(2px); }
+
+  .btn-primary {
+    @apply btn bg-accent text-ink
+           hover:bg-accent-bright
+           active:bg-accent-dim active:text-white;
+  }
+
+  .btn-outline {
+    @apply btn bg-white text-ink
+           border-2 border-ink
+           hover:bg-ink hover:text-white;
+  }
+
+  /* Ghost Action: plain label, sentence case, no padding/border.
+     Lives outside the `.btn` base class on purpose because the
+     Figma shows body-font weight and no uppercase treatment. */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2
+           font-body font-medium text-body text-muted
+           hover:text-ink transition-colors duration-200
+           no-underline cursor-pointer select-none
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+
+  /* Variants on dark backgrounds. `.btn-outline-on-dark` chains
+     `@apply btn-outline` so it inherits `.btn`'s rectangle reset +
+     the 2px border width, then overrides bg/border/text colors. */
+  .btn-outline-on-dark {
+    @apply btn-outline bg-transparent border-white text-white
+           hover:bg-white hover:text-ink;
+  }
+  .section-dark .btn-outline {
+    @apply bg-transparent border-white text-white
+           hover:bg-white hover:text-ink;
+  }
+  .section-dark .btn-ghost,
+  .btn-ghost-on-dark {
+    @apply text-cloud hover:text-accent;
+  }
+
+  /* ========== Tags / pills =====================================
+     Figma "Components → Tags". Sharp rectangles, all-caps micro
+     label. Industry = accent tint, Technology = fog. #tag is sharp,
+     no notch — it sits next to buttons and must match their geometry.
+  ================================================================ */
+  .tag {
+    @apply inline-flex items-center
+           px-3 py-1
+           font-body font-bold text-label
+           uppercase tracking-[0.14em];
+    border-radius: 0;
+  }
+  .tag-industry   { @apply tag bg-accent/20 text-accent-dim; }
+  .tag-technology { @apply tag bg-fog text-slate; }
+
+  /* Tag variant used on dark backgrounds (case-study hero).
+     First tag pops in accent green, the rest fall back to a
+     muted outline so the group reads as "category + stack". */
+  .tag-on-dark {
+    @apply tag border border-white/15 bg-white/5 text-white;
+  }
+  .tag-on-dark:first-child {
+    @apply bg-accent/20 text-accent border-accent/30;
+  }
+
+  /* ========== Filter chips =====================================
+     Figma "Components → Filter Chips":
+       - Inactive : white fill, ink border, ink label, sentence case.
+       - Active   : ink fill, accent label, same ink border.
+     Sharp rectangles. No notch.
+  ================================================================ */
+  .chip {
+    @apply inline-flex items-center
+           px-4 py-2
+           font-body font-medium text-small text-ink
+           bg-white border border-ink
+           transition-colors duration-200
+           cursor-pointer select-none
+           no-underline;
+    border-radius: 0;
+  }
+  .chip:hover { @apply bg-paper; }
+  .chip[aria-pressed="true"],
+  .chip.is-active,
+  .chip.active {
+    @apply bg-ink text-accent border-ink;
+  }
+
+  /* ========== Form controls ==================================== */
+  .form-label {
+    @apply block mb-sm
+           font-body font-semibold text-label uppercase tracking-[0.12em]
+           text-ink;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    @apply w-full px-4 py-3
+           bg-white border border-fog
+           font-body text-body text-ink
+           placeholder:text-muted
+           transition-colors duration-200
+           focus:outline-none focus:border-ink
+           disabled:bg-paper disabled:cursor-not-allowed;
+    border-radius: 0;
+  }
+  .form-textarea { @apply min-h-[140px] leading-relaxed; }
+
+  /* ========== Cards ============================================ */
+  .card {
+    @apply bg-white border border-fog
+           transition-all duration-300
+           hover:shadow-card-lg;
+  }
+  .card-body  { @apply p-lg md:p-xl; }
+  .card-notch { @apply notch-md; }
+  .card-dark  { @apply bg-ink-light text-white border-ink-mid; }
+
+  /* ========== Stat cards (hero sidebar) ========================
+     Figma "Hero → Stats rail". Four dark cards stacked on the
+     right of the hero. Generous side padding (40px), display-
+     scale number, title-case label (natural, NOT uppercase —
+     the marquee number carries the weight). */
+  .stat-card {
+    @apply block px-xl py-lg md:py-xl
+           bg-ink-light border border-white/5
+           transition-colors duration-200;
+  }
+  .stat-card:hover { @apply bg-ink-mid border-accent/40; }
+  .stat-card__number {
+    @apply block font-display font-extrabold
+           text-5xl md:text-6xl leading-none text-white;
+  }
+  .stat-card__label {
+    @apply mt-3 block font-body text-small text-cloud;
+  }
+
+  /* ========== Value cards (About page — 4 col) ================
+     Figma "About → Our values". White cards, numbered marker
+     (01..04) in accent green, heading + short copy. Kept
+     visually separate (normal gap) so each value reads as a
+     standalone principle rather than welded cells.
+  ================================================================ */
+  .value-card {
+    @apply bg-white border border-fog
+           p-lg md:p-xl
+           flex flex-col gap-sm
+           transition-colors duration-200;
+  }
+  .value-card:hover { @apply border-ink/40; }
+  .value-card__marker {
+    @apply block font-display font-extrabold text-label
+           uppercase tracking-[0.22em] text-accent-dim mb-xs;
+  }
+  .value-card__title {
+    @apply font-display font-extrabold text-lg text-ink;
+  }
+  .value-card__copy {
+    @apply font-body text-small text-ink-mid leading-relaxed;
+  }
+
+  /* ========== Service cards (tight 3-col grid) ================= */
+  /* Parent: `.service-grid` — hairline divider look via 2px gap
+     over a fog background, so cards appear welded together. */
+  .service-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+           gap-[2px] bg-fog
+           border border-fog;
+  }
+  .service-card {
+    @apply bg-white p-lg md:p-xl
+           flex flex-col gap-sm
+           transition-colors duration-200;
+    min-height: 240px;
+  }
+  .service-card:hover { @apply bg-paper; }
+  .service-card__marker {
+    @apply block font-display font-extrabold text-label
+           uppercase tracking-[0.22em] text-accent-dim;
+  }
+  .service-card__title {
+    @apply font-display font-extrabold text-lg text-ink;
+  }
+  .service-card__copy {
+    @apply font-body text-small text-ink-mid leading-relaxed;
+  }
+
+  /* ========== Navigation ======================================= */
+  .nav-link {
+    @apply font-body font-medium text-small
+           hover:text-accent-dim transition-colors duration-200 no-underline;
+  }
+  .nav-link.is-current { @apply text-accent-dim; }
+
+  .nav-link-on-dark,
+  .section-dark .nav-link {
+    @apply text-white hover:text-accent;
+  }
+  .nav-link-on-dark.is-current,
+  .section-dark .nav-link.is-current {
+    @apply text-accent;
+  }
+
+  /* ========== Prose overrides for WP editor content ============ */
+  .prose-snz {
+    @apply font-body text-body text-ink-mid leading-relaxed;
+  }
+  .prose-snz > * + * { @apply mt-md; }
+  .prose-snz h2 { @apply text-h2 text-ink mt-2xl mb-md; }
+  .prose-snz h3 { @apply text-h3 text-ink mt-xl mb-sm; }
+  .prose-snz a  { @apply text-ink underline decoration-accent underline-offset-4 hover:text-accent-dim; }
+  .prose-snz ul { @apply list-disc pl-6; }
+  .prose-snz ol { @apply list-decimal pl-6; }
+  .prose-snz blockquote {
+    @apply border-l-4 border-accent pl-lg italic text-slate;
+  }
+}
+
+/* ---------- Utilities ------------------------------------------- */
+@layer utilities {
+  /* Dot-grid backgrounds — Figma "Dot grid size: 24 × 24". */
+  .bg-dot-grid-dark {
+    background-image:
+      radial-gradient(rgba(11, 15, 26, 0.12) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+  .bg-dot-grid-light {
+    background-image:
+      radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+
+  /* Hero dot-grid — slightly denser and offset so it reads as a
+     technical grid rather than a texture. */
+  .bg-hero-dot {
+    background-color: theme('colors.ink.DEFAULT');
+    background-image:
+      radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+  }
+
+  /* Figma "CTA banners: Ink with dot grid overlay". */
+  .cta-banner {
+    background-color: theme('colors.ink.DEFAULT');
+    background-image:
+      radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    color: #fff;
+  }
+
+  /* Accent text gradient for hero highlight words. */
+  .text-gradient-accent {
+    @apply bg-clip-text text-transparent;
+    background-image:
+      linear-gradient(135deg, theme('colors.accent.bright'), theme('colors.accent.DEFAULT'));
+  }
+
+  /* Line clamp for card excerpts (v2 shipped with Tailwind but we
+     guarantee it exists regardless of config). */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4
+           focus:z-50 focus:bg-accent focus:text-ink focus:px-4 focus:py-2
+           focus:font-display focus:font-bold focus:uppercase focus:tracking-wider;
+  }
+}

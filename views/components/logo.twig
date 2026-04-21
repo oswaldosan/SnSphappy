@@ -1,0 +1,61 @@
+{#
+   views/components/logo.twig
+   ---------------------------
+   Snazzy Sprocket brand mark. Wraps the logo PNG (assets/images/snazzylogo.png)
+   and optionally the wordmark next to it. Used in the header and footer.
+
+   Params (all optional):
+     - href            : link destination (default: site.url). Pass null to render
+                         as a non-link <span>.
+     - size            : 'sm' | 'md' | 'lg' (default: 'md')
+                         Controls the mark's width. Height auto-scales.
+     - show_wordmark   : bool (default: true)  — show "Snazzy Sprocket" text
+     - wordmark_class  : extra classes for the wordmark (default: 'text-white')
+     - class           : extra classes on the wrapper
+     - aria_label      : accessible name  (default: 'Snazzy Sprocket — Home')
+#}
+
+{% set _sizes = {
+    'sm': 'h-8',
+    'md': 'h-10',
+    'lg': 'h-12'
+} %}
+{% set _size_class = _sizes[size|default('md')]|default('h-10') %}
+
+{# Prefer the explicit `theme_url` context value (set in StarterSite::add_to_context)
+   since it always resolves, independently of Timber/Site property quirks. #}
+{% set _logo_src = (theme_url ?? site.theme.link) ~ '/assets/images/snazzylogo.png' %}
+{% set _show_wordmark = show_wordmark is defined ? show_wordmark : true %}
+{% set _wordmark_class = wordmark_class|default('text-white') %}
+{% set _wrapper_class = ['flex items-center gap-3', class|default('')]|join(' ')|trim %}
+
+{% set _has_link = href is not defined or (href is defined and href is not null) %}
+{% set _href = href|default(site.url) %}
+{% set _aria = aria_label|default('Snazzy Sprocket — Home') %}
+
+{% if _has_link %}
+    <a href="{{ _href }}" class="{{ _wrapper_class }} no-underline group" aria-label="{{ _aria }}">
+{% else %}
+    <span class="{{ _wrapper_class }}" role="img" aria-label="{{ _aria }}">
+{% endif %}
+
+    <img
+        src="{{ _logo_src }}"
+        alt=""
+        aria-hidden="true"
+        class="{{ _size_class }} w-auto shrink-0 transition-transform group-hover:scale-[1.04]"
+        loading="eager"
+        decoding="async"
+    >
+
+    {% if _show_wordmark %}
+        <span class="font-display font-extrabold text-lg tracking-tight {{ _wordmark_class }}">
+            Snazzy Sprocket
+        </span>
+    {% endif %}
+
+{% if _has_link %}
+    </a>
+{% else %}
+    </span>
+{% endif %}

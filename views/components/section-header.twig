@@ -1,0 +1,43 @@
+{#
+   views/components/section-header.twig
+   -------------------------------------
+   Standardized section intro used above every major content block.
+   Follows the Figma "Section header" spec: eyebrow → headline → lede.
+
+   Params:
+     - eyebrow        : string, optional  — small uppercase label
+     - heading        : string            — plain-text heading
+     - heading_html   : string            — sanitized HTML (takes priority)
+     - lede           : string, optional  — subtitle paragraph
+     - level          : string            — heading tag (default: 'h2')
+     - center         : bool              — centered alignment (default: false)
+     - size           : 'sm' | 'md' | 'lg' — heading emphasis (default: 'md')
+     - class          : extra classes on the wrapper
+     - max_width      : Tailwind max-w utility (default: 'max-w-2xl')
+#}
+
+{% set _level = level|default('h2') %}
+{% set _max   = max_width|default('max-w-2xl') %}
+{% set _align = center|default(false) ? 'text-center mx-auto' : '' %}
+
+{% set _heading_class = {
+    'sm': '',
+    'md': 'mb-md',
+    'lg': 'hero-headline mb-md'
+}[size|default('md')]|default('mb-md') %}
+
+<div class="{{ _max }} mb-2xl {{ _align }} {{ class|default('') }}">
+    {% if eyebrow %}
+        <p class="eyebrow mb-sm">{{ eyebrow }}</p>
+    {% endif %}
+
+    {% if heading_html or heading %}
+        <{{ _level }} class="{{ _heading_class }}">
+            {% if heading_html %}{{ heading_html|raw }}{% else %}{{ heading }}{% endif %}
+        </{{ _level }}>
+    {% endif %}
+
+    {% if lede %}
+        <p class="lede">{{ lede }}</p>
+    {% endif %}
+</div>

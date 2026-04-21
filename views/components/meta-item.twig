@@ -1,0 +1,20 @@
+{# ===== Meta Item =====
+   A single cell in a project/case-study meta row.
+
+   Params:
+     - label (string, required)   — small uppercase label (e.g. "Client")
+     - value (string|html, required) — bold body value (plain text)
+     - class (string, optional)
+
+   Renders a compact 2-line block meant to sit inside a
+   `grid grid-cols-3 divide-x divide-fog border-y` row. #}
+
+{% set _classes = [
+    'px-md sm:px-lg py-md sm:py-lg',
+    class|default('')
+]|join(' ') %}
+
+<div class="{{ _classes|trim }}">
+    <p class="form-label mb-xs">{{ label }}</p>
+    <p class="text-body font-semibold text-ink leading-snug">{{ value }}</p>
+</div>

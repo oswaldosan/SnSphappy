@@ -1,0 +1,18 @@
+{% extends "base.twig" %}
+
+{% block content %}
+    <article class="section bg-white">
+        <div class="container-narrow">
+            <p class="text-label uppercase tracking-[0.14em] text-muted mb-sm">{{ post.date }}</p>
+            <h1 class="mb-lg">{{ post.title }}</h1>
+
+            {% if post.thumbnail %}
+                <img src="{{ post.thumbnail.src('hero-image') }}" alt="{{ post.title }}" class="w-full notch-md mb-xl">
+            {% endif %}
+
+            <div class="prose-snz">
+                {{ post.content }}
+            </div>
+        </div>
+    </article>
+{% endblock %}

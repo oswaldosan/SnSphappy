@@ -1,0 +1,129 @@
+{# ===== Site Footer =====
+   Figma "Footer: Ink". Four columns:
+     1. Brand — logo + short tagline
+     2. Company — navigation (About, Case Studies, Contact, Careers)
+     3. Services — service landing pages
+     4. Connect — social links rendered as plain text anchors
+   Bottom bar: copyright + legal links. #}
+
+{# ---- Data fallbacks ----------------------------------------- #}
+{% set footer_company = menu_footer ? menu_footer.items : [
+    { title: 'About',        link: site.url ~ '/about' },
+    { title: 'Case Studies', link: site.url ~ '/case-studies' },
+    { title: 'Contact',      link: site.url ~ '/contact' },
+    { title: 'Careers',      link: site.url ~ '/careers' }
+] %}
+
+{% set footer_services = options.footer_services|default([
+    { title: 'Web Design',  link: site.url ~ '/services/web-design' },
+    { title: 'Development', link: site.url ~ '/services/development' },
+    { title: 'SEO',         link: site.url ~ '/services/seo' },
+    { title: 'Hosting',     link: site.url ~ '/services/hosting' }
+]) %}
+
+{% set footer_connect = [
+    { title: 'Twitter / X', link: options.social_twitter|default('#') },
+    { title: 'LinkedIn',    link: options.social_linkedin|default('#') },
+    { title: 'Dribbble',    link: options.social_dribbble|default('#') },
+    { title: 'GitHub',      link: options.social_github|default('#') }
+] %}
+
+{% set legal_links = [
+    { title: 'Privacy Policy',   link: site.url ~ '/privacy-policy' },
+    { title: 'Terms of Service', link: site.url ~ '/terms-of-service' }
+] %}
+
+<footer class="bg-ink text-cloud">
+
+    {# ---- Main footer grid ---- #}
+    <div class="container-snz py-3xl">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-xl">
+
+            {# ---- Column 1 — Brand (4/12) ---- #}
+            <div class="md:col-span-4">
+                {% include 'components/logo.twig' with {
+                    size:  'md',
+                    class: 'mb-md'
+                } only %}
+
+                <p class="text-small text-soft max-w-xs leading-relaxed">
+                    {{ options.footer_text|default('High-performance digital experiences for ambitious brands. Based in Philadelphia, working worldwide.') }}
+                </p>
+            </div>
+
+            {# ---- Column 2 — Company ---- #}
+            <nav class="md:col-span-3 lg:col-span-3" aria-label="Company">
+                <h4 class="font-body font-semibold text-label uppercase tracking-[0.18em] text-white mb-md">
+                    Company
+                </h4>
+                <ul class="flex flex-col gap-sm">
+                    {% for item in footer_company %}
+                        <li>
+                            <a href="{{ item.link }}" class="text-small text-cloud hover:text-accent transition-colors no-underline">
+                                {{ item.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            {# ---- Column 3 — Services ---- #}
+            <nav class="md:col-span-3 lg:col-span-3" aria-label="Services">
+                <h4 class="font-body font-semibold text-label uppercase tracking-[0.18em] text-white mb-md">
+                    Services
+                </h4>
+                <ul class="flex flex-col gap-sm">
+                    {% for item in footer_services %}
+                        <li>
+                            <a href="{{ item.link }}" class="text-small text-cloud hover:text-accent transition-colors no-underline">
+                                {{ item.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            {# ---- Column 4 — Connect ---- #}
+            <nav class="md:col-span-2 lg:col-span-2" aria-label="Connect">
+                <h4 class="font-body font-semibold text-label uppercase tracking-[0.18em] text-white mb-md">
+                    Connect
+                </h4>
+                <ul class="flex flex-col gap-sm">
+                    {% for item in footer_connect %}
+                        <li>
+                            <a href="{{ item.link }}"
+                               class="text-small text-cloud hover:text-accent transition-colors no-underline"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                {{ item.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+    {# ---- Bottom bar ---- #}
+    <div class="border-t border-white/10">
+        <div class="container-snz py-md flex flex-col sm:flex-row items-center justify-between gap-sm">
+            <p class="text-small text-muted">
+                &copy; {{ current_year }} Snazzy Sprocket. All rights reserved.
+            </p>
+
+            <ul class="flex items-center gap-md text-small text-muted" aria-label="Legal">
+                {% for link in legal_links %}
+                    <li class="flex items-center gap-md">
+                        <a href="{{ link.link }}" class="hover:text-accent transition-colors no-underline">
+                            {{ link.title }}
+                        </a>
+                        {% if not loop.last %}
+                            <span aria-hidden="true" class="text-steel">·</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</footer>

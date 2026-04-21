@@ -1,0 +1,20 @@
+{#
+   views/components/icon-arrow.twig
+   --------------------------------
+   Standard right-arrow glyph used across links, buttons and cards.
+
+   Params (all optional):
+     - class       : override classes on the SVG (default: 'w-4 h-4 btn-arrow')
+     - stroke      : stroke weight (default: 2.2)
+     - aria_hidden : boolean (default: true)
+#}
+<svg
+    class="{{ class|default('w-4 h-4 btn-arrow') }}"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="{{ stroke|default('2.2') }}"
+    viewBox="0 0 24 24"
+    {% if aria_hidden|default(true) %}aria-hidden="true"{% endif %}
+>
+    <path stroke-linecap="round" d="M5 12h14m-6-6 6 6-6 6"/>
+</svg>

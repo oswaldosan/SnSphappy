@@ -1,0 +1,55 @@
+{
+    "key": "group_team_member_details",
+    "title": "Team Member Details",
+    "fields": [
+        {
+            "key": "field_tm_job_title",
+            "label": "Job Title",
+            "name": "job_title",
+            "type": "text",
+            "instructions": "Their role at Snazzy Sprocket.",
+            "placeholder": "Senior Developer",
+            "required": 1
+        },
+        {
+            "key": "field_tm_short_bio",
+            "label": "Short Bio",
+            "name": "short_bio",
+            "type": "textarea",
+            "instructions": "A brief bio (1-2 sentences). Optional — used if you add a team detail view later.",
+            "rows": 2,
+            "new_lines": "br"
+        },
+        {
+            "key": "field_tm_linkedin_url",
+            "label": "LinkedIn URL",
+            "name": "linkedin_url",
+            "type": "url",
+            "instructions": "Full LinkedIn profile URL."
+        },
+        {
+            "key": "field_tm_twitter_url",
+            "label": "Twitter / X URL",
+            "name": "twitter_url",
+            "type": "url",
+            "instructions": "Full Twitter / X profile URL."
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "team_member"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776910000,
+    "active": true,
+    "show_in_rest": 0
+}

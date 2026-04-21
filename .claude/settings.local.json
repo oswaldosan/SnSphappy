@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls *)",
+      "Bash(find /Users/oswaldosanchez/work/snazzy-sprocket/blocks/src -name \"block.json\" -exec sh -c 'echo \"=== $\\(dirname {}\\) ===\" && cat {}' \\\\;)"
+    ]
+  }
+}

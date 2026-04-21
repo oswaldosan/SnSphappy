@@ -1,0 +1,41 @@
+{#
+   views/components/cta-banner.twig
+   ---------------------------------
+   Ink CTA banner with centered content and primary button.
+   Used at the bottom of the homepage, about, and similar long pages.
+
+   Params:
+     - eyebrow            : string, optional
+     - heading            : string, plain text
+     - heading_html       : string, sanitized HTML (takes priority)
+     - lede               : string, optional
+     - button_label       : string  (default: 'Start a Conversation')
+     - button_href        : string  (default: site.url ~ '/contact')
+     - button_variant     : string  (default: 'primary')
+     - button_arrow       : bool    (default: true)
+     - heading_class      : extra classes on the heading (optional)
+#}
+<section class="cta-banner">
+    <div class="container-snz py-2xl md:py-3xl text-center">
+        {% if eyebrow %}
+            <p class="eyebrow mb-sm">{{ eyebrow }}</p>
+        {% endif %}
+
+        {% if heading_html or heading %}
+            <h2 class="hero-headline text-white mb-md max-w-3xl mx-auto {{ heading_class|default('') }}">
+                {% if heading_html %}{{ heading_html|raw }}{% else %}{{ heading }}{% endif %}
+            </h2>
+        {% endif %}
+
+        {% if lede %}
+            <p class="lede mx-auto max-w-xl mb-xl">{{ lede }}</p>
+        {% endif %}
+
+        {% include 'components/button.twig' with {
+            label:   button_label|default('Start a Conversation'),
+            href:    button_href,
+            variant: button_variant|default('primary'),
+            arrow:   button_arrow is defined ? button_arrow : true
+        } only %}
+    </div>
+</section>

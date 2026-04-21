@@ -1,0 +1,14 @@
+{#
+   views/components/stat-card.twig
+   --------------------------------
+   Hero / about stat tile. Use from any iteration over an array of stats.
+
+   Params:
+     - value   : string  (e.g. "120+")   — accepts plain text or simple HTML
+     - label   : string  (e.g. "Projects")
+     - class   : extra classes on the root
+#}
+<div class="stat-card {{ class|default('') }}">
+    <span class="stat-card__number">{{ value }}</span>
+    <span class="stat-card__label">{{ label }}</span>
+</div>

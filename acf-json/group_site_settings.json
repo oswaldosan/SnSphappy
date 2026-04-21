@@ -1,0 +1,96 @@
+{
+    "key": "group_site_settings",
+    "title": "Company Information",
+    "fields": [
+        {
+            "key": "field_ss_tab_contact",
+            "label": "Contact Details",
+            "name": "",
+            "type": "tab",
+            "placement": "left"
+        },
+        {
+            "key": "field_ss_email",
+            "label": "Company Email",
+            "name": "company_email",
+            "type": "email",
+            "placeholder": "hello@snazzysprocket.dev"
+        },
+        {
+            "key": "field_ss_phone",
+            "label": "Company Phone",
+            "name": "company_phone",
+            "type": "text",
+            "placeholder": "+1 (555) 123-4567"
+        },
+        {
+            "key": "field_ss_address",
+            "label": "Office Address",
+            "name": "company_address",
+            "type": "textarea",
+            "rows": 2,
+            "placeholder": "123 Innovation Drive, Suite 400, San Francisco, CA 94107"
+        },
+        {
+            "key": "field_ss_tab_social",
+            "label": "Social Media",
+            "name": "",
+            "type": "tab",
+            "placement": "left"
+        },
+        {
+            "key": "field_ss_twitter",
+            "label": "Twitter / X URL",
+            "name": "social_twitter",
+            "type": "url"
+        },
+        {
+            "key": "field_ss_linkedin",
+            "label": "LinkedIn URL",
+            "name": "social_linkedin",
+            "type": "url"
+        },
+        {
+            "key": "field_ss_github",
+            "label": "GitHub URL",
+            "name": "social_github",
+            "type": "url"
+        },
+        {
+            "key": "field_ss_dribbble",
+            "label": "Dribbble URL",
+            "name": "social_dribbble",
+            "type": "url"
+        },
+        {
+            "key": "field_ss_tab_footer",
+            "label": "Footer",
+            "name": "",
+            "type": "tab",
+            "placement": "left"
+        },
+        {
+            "key": "field_ss_footer_text",
+            "label": "Footer Tagline",
+            "name": "footer_text",
+            "type": "text",
+            "placeholder": "Crafting digital experiences that move the needle."
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "site-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776900000,
+    "active": true
+}

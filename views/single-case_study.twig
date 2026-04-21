@@ -1,0 +1,158 @@
+{% extends "base.twig" %}
+
+{% block meta_description %}{{ post.meta('project_overview') ?: post.preview.length(160) }}{% endblock %}
+
+{% block content %}
+
+    {# ============================================
+       1 · DARK HERO — tags · title · lede
+       ============================================ #}
+    {% set _tags = post.terms('industry')|merge(post.terms('technology')) %}
+    {% include 'components/case-study-hero.twig' with {
+        tags:  _tags|map(t => t.name),
+        title: post.title,
+        lede:  post.meta('project_overview')
+    } only %}
+
+    {# ============================================
+       2 · HERO IMAGE — overlaps the dark hero edge
+       ============================================ #}
+    <section class="bg-white">
+        <div class="container-snz -mt-xl md:-mt-2xl">
+            {% if post.thumbnail %}
+                <img
+                    src="{{ post.thumbnail.src('hero-image') }}"
+                    alt="{{ post.thumbnail.alt ?: post.title }}"
+                    class="w-full h-auto block shadow-sm"
+                    width="{{ post.thumbnail.width }}"
+                    height="{{ post.thumbnail.height }}"
+                >
+            {% else %}
+                {# Placeholder — mirrors the Figma mock when no thumbnail
+                   has been set. Keeps the layout intact in content-only
+                   drafts and during local development. #}
+                <div class="w-full aspect-[3/1] bg-paper border border-fog
+                            flex items-center justify-center text-muted text-small">
+                    Hero Image — 1200 × 400
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {# ============================================
+       3 · META ROW — client / timeline / services
+       ============================================ #}
+    <section class="bg-white pt-2xl md:pt-3xl">
+        <div class="container-snz">
+            <div class="grid grid-cols-1 sm:grid-cols-3
+                        border-y border-fog
+                        divide-y sm:divide-y-0 sm:divide-x divide-fog">
+                {% include 'components/meta-item.twig' with {
+                    label: 'Client',
+                    value: post.meta('client_name') ?: '—'
+                } only %}
+
+                {% include 'components/meta-item.twig' with {
+                    label: 'Timeline',
+                    value: post.meta('project_duration') ?: post.meta('project_year') ?: '—'
+                } only %}
+
+                {% include 'components/meta-item.twig' with {
+                    label: 'Services',
+                    value: post.meta('project_services') ?: 'Design, Development, Strategy'
+                } only %}
+            </div>
+        </div>
+    </section>
+
+    {# ============================================
+       4 · BODY CONTENT — narrow column, Challenge / Approach / Result
+       ============================================ #}
+    <section class="bg-white py-2xl md:py-3xl">
+        <div class="container-snz">
+            <div class="max-w-3xl">
+                {% if post.content %}
+                    <div class="prose-snz">
+                        {{ post.content }}
+                    </div>
+                {% endif %}
+
+                {% if post.meta('project_results') %}
+                    <div class="mt-2xl">
+                        {% include 'components/callout.twig' with {
+                            eyebrow: 'Impact',
+                            body:    post.meta('project_results'),
+                            variant: 'accent'
+                        } only %}
+                    </div>
+                {% endif %}
+
+                {% if post.meta('client_testimonial') %}
+                    <div class="mt-2xl">
+                        {% include 'components/testimonial.twig' with {
+                            quote:  post.meta('client_testimonial'),
+                            author: post.meta('testimonial_author')
+                        } only %}
+                    </div>
+                {% endif %}
+
+                {% if post.meta('project_url') %}
+                    <div class="mt-2xl pt-xl border-t border-fog">
+                        {% include 'components/button.twig' with {
+                            label:   'Visit Live Site',
+                            href:    post.meta('project_url'),
+                            variant: 'primary',
+                            target:  '_blank',
+                            rel:     'noopener'
+                        } only %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    {# ============================================
+       5 · GALLERY (optional, full-width card grid)
+       ============================================ #}
+    {% if post.meta('project_gallery') %}
+        {% include 'components/image-gallery.twig' with {
+            images:       post.meta('project_gallery'),
+            eyebrow:      'Gallery',
+            heading:      'Project visuals',
+            cols:         2,
+            alt_fallback: post.title ~ ' screenshot',
+            class:        'pb-2xl md:pb-3xl'
+        } only %}
+    {% endif %}
+
+    {# ============================================
+       6 · RELATED WORK
+       ============================================ #}
+    {% if related_work|length > 0 %}
+        <section class="section section-muted">
+            <div class="container-snz">
+                <div class="flex items-end justify-between mb-xl gap-lg">
+                    {% include 'components/section-header.twig' with {
+                        eyebrow: 'More work',
+                        heading: 'Related case studies',
+                        class:   '!mb-0'
+                    } only %}
+
+                    {% include 'components/button.twig' with {
+                        label:   'View All',
+                        href:    site.url ~ '/case-studies',
+                        variant: 'outline',
+                        class:   'hidden sm:inline-flex shrink-0'
+                    } only %}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    {% for study in related_work %}
+                        {% include 'partials/case-study-card.twig' with { study: study } %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+{% endblock %}

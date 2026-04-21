@@ -1,0 +1,69 @@
+---
+description: Snazzy Sprocket design system — Figma tokens, Tailwind, components
+globs: views/**/*.twig,src/css/**/*.css,tailwind.config.js,**/*.php
+alwaysApply: false
+---
+
+# Design System Rules
+
+Tokens are derived from the Figma file and defined in `tailwind.config.js` +
+`src/css/main.css`. **Never invent colors, sizes, or fonts** — use the tokens
+below. If something is missing, add it to the config first.
+
+## Colors (Figma "Primary dark palette" + "Accent Usage")
+
+Dark scale: `ink` (DEFAULT `#0B0F1A`, `ink-light`, `ink-mid`), `slate`, `steel`,
+`muted`, `soft`, `cloud`, `fog`, `paper`, plus `white`.
+Accent: `accent` (DEFAULT `#00D4AA`, `accent-bright`, `accent-dim`, `accent/15`
+for glow). Brand: `brand-teal`, `brand-navy`.
+Back-compat aliases: `neutral-*` and `brand-*` (50–950) mirror the `ink` scale.
+
+## Typography
+
+- `font-display` → **Syne** (700, 800) — headings, hero, stats, logo.
+- `font-body`    → **DM Sans** (400/500/600/700) — everything else.
+- Type scale: `text-h1` 56, `text-h2` 44, `text-h3` 20, `text-body` 16,
+  `text-small` 14, `text-label` 11. Legacy `text-display-*` still work.
+
+## Spacing & layout
+
+- Figma scale: `xs` 4, `sm` 8, `md` 16, `lg` 24, `xl` 40, `2xl` 64, `3xl` 100,
+  `4xl` 140. Works on `p-*`, `m-*`, `gap-*`, `py-*`, etc.
+- Max content width: `1200px` → use `.container-snz` or `max-w-content`.
+- Section rhythm: `py-section` (100px), `py-section-sm` (64px).
+
+## Components (preferred classes)
+
+Use these semantic classes instead of inline utility soup:
+
+- Buttons: `btn-primary` (accent), `btn-outline` (ink), `btn-ghost`.
+- Tags: `tag-industry`, `tag-technology`.
+- Filter chips: `chip` + `aria-pressed="true"` or `.is-active`.
+- Forms: `form-input`, `form-select`, `form-textarea`, `form-label`.
+- Sections: `section`, `section-dark`, `section-muted`, `cta-banner`.
+- Cards: `card`, `card-notch`, `card-dark`, `card-body`.
+- Prose (WP editor output): wrap with `.prose-snz`.
+
+## Mechanical notch motif
+
+Signature bevel. Apply `notch-xs` (8px), `notch-sm` (12px), `notch-md` (16px),
+or `notch`/`notch-lg` (28px) on buttons, chips, tags, and cards. Ghost buttons
+intentionally have no notch.
+
+## Dot grid
+
+`bg-dot-grid-dark` / `bg-dot-grid-light` with the default 24×24 pattern, or
+the ready-made `cta-banner` (ink + white dots overlay).
+
+## Accessibility
+
+- Use `.skip-link` for skip-to-content.
+- Focus styles are global (accent ring); inherit `ring-offset-ink` on dark
+  sections (already handled in CSS).
+
+## Anti-patterns
+
+- ❌ Raw hex colors in templates (`class="bg-[#00D4AA]"`).
+- ❌ Arbitrary typography sizes (`text-[56px]`) — use `text-h1`.
+- ❌ `rounded-*` on buttons/chips/cards that should carry the notch motif.
+- ❌ Stacking `px-6 py-3 bg-accent text-ink font-bold ...` manually — use `btn-primary`.

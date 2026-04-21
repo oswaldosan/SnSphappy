@@ -1,0 +1,114 @@
+{#
+   views/components/page-hero.twig
+   --------------------------------
+   Ink/dot-grid page hero used on every interior page (About, Contact,
+   archives, 404 variants). For the homepage hero (with stats sidebar)
+   see front-page.twig — that layout is intentionally bespoke.
+
+   Params:
+     - eyebrow        : string, optional             — small uppercase label.
+     - heading        : string                       — plain-text headline.
+     - heading_html   : string                       — sanitized HTML; takes
+                                                       priority over `heading`.
+     - lede           : string, optional             — supporting paragraph.
+
+     - size           : 'md' | 'lg'  (default: 'md') — 'lg' bumps the headline
+                                                       up to a marquee size
+                                                       (used on the About page
+                                                       and other narrative
+                                                       intros) with looser
+                                                       leading and more bottom
+                                                       margin so descenders
+                                                       don't collide with the
+                                                       lede on multi-line wraps.
+
+     - halo           : bool         (default: true) — soft radial accent glow
+                                                       behind the top-right.
+     - halo_opacity   : 'strong' | 'soft'
+                                     (default: 'strong')
+                                                     — `soft` dims the halo to
+                                                       opacity-40 so the page
+                                                       reads as editorial
+                                                       rather than promotional.
+
+     - accent_rule    : bool         (default: false)
+                                                     — 40px accent-green dash
+                                                       preceding the eyebrow
+                                                       (used to anchor the
+                                                       About / narrative
+                                                       intros as "chapter"
+                                                       openers).
+
+     - max_width      : Tailwind max-w utility
+                                     (default: 'max-w-3xl')
+                                                     — inner text column width.
+
+     - padding        : 'normal' | 'loose'
+                                     (default: 'normal')
+                                                     — `loose` adds extra top
+                                                       and bottom space, used
+                                                       with `size: 'lg'` so
+                                                       the larger headline has
+                                                       room to breathe.
+#}
+
+{% set _size           = size|default('md') %}
+{% set _max            = max_width|default('max-w-3xl') %}
+{% set _halo           = halo is defined ? halo : true %}
+{% set _halo_opacity   = halo_opacity|default('strong') %}
+{% set _accent_rule    = accent_rule|default(false) %}
+{% set _padding        = padding|default(_size == 'lg' ? 'loose' : 'normal') %}
+
+{# ---- Headline classes per size variant --------------------------- #}
+{% set _headline_class = {
+    'md': 'text-white hero-headline
+           text-4xl sm:text-5xl md:text-[3.25rem] lg:text-h1
+           leading-[1.05] mb-lg md:mb-xl',
+    'lg': 'text-white hero-headline
+           text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem]
+           leading-[1.08] tracking-[-0.02em]
+           mb-xl md:mb-2xl'
+}[_size] %}
+
+{# ---- Vertical rhythm per padding variant ------------------------- #}
+{% set _padding_class = {
+    'normal': 'pt-sm md:pt-lg lg:pt-xl pb-xl md:pb-2xl lg:pb-3xl',
+    'loose':  'pt-md md:pt-xl lg:pt-2xl pb-2xl md:pb-3xl lg:pb-4xl'
+}[_padding] %}
+
+{# ---- Halo intensity --------------------------------------------- #}
+{% set _halo_class = _halo_opacity == 'soft' ? 'opacity-40' : 'opacity-60' %}
+
+<section class="relative bg-hero-dot text-white -mt-20 pt-20 overflow-hidden">
+    {% if _halo %}
+        <div class="pointer-events-none absolute -right-40 -top-10 w-[480px] h-[480px] bg-accent-halo {{ _halo_class }}"></div>
+    {% endif %}
+
+    <div class="container-snz relative {{ _padding_class }}">
+        <div class="{{ _max }}">
+            {% if eyebrow %}
+                <p class="eyebrow mb-{{ _accent_rule ? 'lg' : 'sm' }} animate-fade-in
+                          {{ _accent_rule ? 'flex items-center gap-sm' : '' }}">
+                    {% if _accent_rule %}
+                        <span class="inline-block w-10 h-px bg-accent" aria-hidden="true"></span>
+                        <span>{{ eyebrow }}</span>
+                    {% else %}
+                        {{ eyebrow }}
+                    {% endif %}
+                </p>
+            {% endif %}
+
+            {% if heading_html %}
+                <h1 class="{{ _headline_class }} animate-slide-up">{{ heading_html|raw }}</h1>
+            {% elseif heading %}
+                <h1 class="{{ _headline_class }} animate-slide-up">{{ heading }}</h1>
+            {% endif %}
+
+            {% if lede %}
+                <p class="lede max-w-2xl animate-slide-up" style="animation-delay: .12s">
+                    {{ lede }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</section>

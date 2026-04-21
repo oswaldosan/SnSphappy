@@ -1,0 +1,46 @@
+{% extends "base.twig" %}
+
+{% block content %}
+    <section class="section bg-white">
+        <div class="container-snz">
+            <div class="max-w-2xl mb-2xl">
+                <p class="eyebrow mb-sm">Journal</p>
+                <h1 class="mb-md">Latest posts</h1>
+                <p class="lede">News, notes, and technical write-ups from the Snazzy Sprocket team.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                {% for post in posts %}
+                    <article class="card flex flex-col h-full">
+                        {% if post.thumbnail %}
+                            <a href="{{ post.link }}" class="block aspect-[3/2] overflow-hidden no-underline">
+                                <img src="{{ post.thumbnail.src('card-thumbnail') }}"
+                                     alt="{{ post.title }}"
+                                     class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500"
+                                     loading="lazy">
+                            </a>
+                        {% endif %}
+                        <div class="card-body flex-1 flex flex-col">
+                            <p class="text-label uppercase tracking-[0.14em] text-muted mb-sm">{{ post.date }}</p>
+                            <h3 class="mb-sm">
+                                <a href="{{ post.link }}" class="text-ink hover:text-accent-dim transition-colors no-underline">
+                                    {{ post.title }}
+                                </a>
+                            </h3>
+                            <p class="text-small text-ink-mid leading-relaxed line-clamp-3 mb-md">
+                                {{ post.preview.length(140).read_more('') }}
+                            </p>
+                            <a href="{{ post.link }}"
+                               class="mt-auto inline-flex items-center gap-xs
+                                      font-display font-bold text-label uppercase tracking-[0.14em]
+                                      text-accent-dim hover:text-accent-bright transition-colors no-underline">
+                                Read Post
+                                <svg class="w-3.5 h-3.5 btn-arrow" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

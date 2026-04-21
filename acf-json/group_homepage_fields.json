@@ -1,0 +1,208 @@
+{
+    "key": "group_homepage_fields",
+    "title": "Homepage Settings",
+    "fields": [
+        {
+            "key": "field_hp_tab_hero",
+            "label": "Hero Section",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_hp_hero_eyebrow",
+            "label": "Hero Eyebrow",
+            "name": "hero_eyebrow",
+            "type": "text",
+            "instructions": "Small uppercase label above the headline. Example: “Award-winning digital agency”.",
+            "placeholder": "Award-winning digital agency",
+            "maxlength": 60
+        },
+        {
+            "key": "field_hp_hero_headline",
+            "label": "Hero Headline",
+            "name": "hero_headline",
+            "type": "textarea",
+            "instructions": "Main hero headline. Wrap a word in <code>&lt;em&gt;word&lt;/em&gt;</code> to highlight it in accent green, and use <code>&lt;br&gt;</code> to force a line break.",
+            "placeholder": "We engineer\nwebsites that\n<em>drive</em> results",
+            "rows": 4,
+            "new_lines": ""
+        },
+        {
+            "key": "field_hp_hero_subheadline",
+            "label": "Hero Subheadline",
+            "name": "hero_subheadline",
+            "type": "textarea",
+            "instructions": "Supporting copy below the headline.",
+            "rows": 3
+        },
+        {
+            "key": "field_hp_hero_stats",
+            "label": "Hero Stats",
+            "name": "hero_stats",
+            "type": "repeater",
+            "instructions": "Numbers displayed in the stat cards to the right of the hero. Add up to four.",
+            "min": 0,
+            "max": 4,
+            "layout": "table",
+            "button_label": "Add Stat",
+            "sub_fields": [
+                {
+                    "key": "field_hp_hero_stat_value",
+                    "label": "Value",
+                    "name": "stat_value",
+                    "type": "text",
+                    "instructions": "Eg. 120+, 98%, 8 yrs.",
+                    "required": 1,
+                    "maxlength": 10
+                },
+                {
+                    "key": "field_hp_hero_stat_label",
+                    "label": "Label",
+                    "name": "stat_label",
+                    "type": "text",
+                    "instructions": "Eg. Projects Delivered.",
+                    "required": 1,
+                    "maxlength": 40
+                }
+            ]
+        },
+        {
+            "key": "field_hp_tab_services",
+            "label": "Services Section",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_hp_services_eyebrow",
+            "label": "Services Eyebrow",
+            "name": "services_eyebrow",
+            "type": "text",
+            "placeholder": "What we do",
+            "maxlength": 40
+        },
+        {
+            "key": "field_hp_services_headline",
+            "label": "Services Headline",
+            "name": "services_headline",
+            "type": "textarea",
+            "instructions": "Supports the same <code>&lt;em&gt;</code> accent trick as the hero.",
+            "placeholder": "Services built for growth",
+            "rows": 2,
+            "new_lines": ""
+        },
+        {
+            "key": "field_hp_services_subheadline",
+            "label": "Services Subheadline",
+            "name": "services_subheadline",
+            "type": "textarea",
+            "rows": 2
+        },
+        {
+            "key": "field_hp_services",
+            "label": "Services",
+            "name": "services",
+            "type": "repeater",
+            "instructions": "Add 3–6 services. The grid renders three columns so multiples of three read best.",
+            "min": 0,
+            "max": 6,
+            "layout": "block",
+            "button_label": "Add Service",
+            "sub_fields": [
+                {
+                    "key": "field_hp_service_marker",
+                    "label": "Marker",
+                    "name": "service_marker",
+                    "type": "text",
+                    "instructions": "Small prefix shown above the title (eg. “—”, “01”, “02”).",
+                    "default_value": "—",
+                    "maxlength": 8
+                },
+                {
+                    "key": "field_hp_service_title",
+                    "label": "Service Title",
+                    "name": "service_title",
+                    "type": "text",
+                    "required": 1
+                },
+                {
+                    "key": "field_hp_service_description",
+                    "label": "Service Description",
+                    "name": "service_description",
+                    "type": "textarea",
+                    "rows": 3,
+                    "required": 1
+                }
+            ]
+        },
+        {
+            "key": "field_hp_tab_featured",
+            "label": "Featured Work",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_hp_featured_case_studies",
+            "label": "Featured Case Studies",
+            "name": "featured_case_studies",
+            "type": "relationship",
+            "instructions": "Select up to 3 case studies to feature on the homepage. If empty, the 3 most recent will be shown.",
+            "post_type": ["case_study"],
+            "filters": ["search"],
+            "min": 0,
+            "max": 3,
+            "return_format": "id"
+        },
+        {
+            "key": "field_hp_tab_cta",
+            "label": "CTA Section",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_hp_cta_eyebrow",
+            "label": "CTA Eyebrow",
+            "name": "cta_eyebrow",
+            "type": "text",
+            "placeholder": "Let's build",
+            "maxlength": 40
+        },
+        {
+            "key": "field_hp_cta_headline",
+            "label": "CTA Headline",
+            "name": "cta_headline",
+            "type": "textarea",
+            "instructions": "Supports the same <code>&lt;em&gt;</code> accent trick as the hero.",
+            "placeholder": "Ready to engineer something great?",
+            "rows": 2,
+            "new_lines": ""
+        },
+        {
+            "key": "field_hp_cta_subheadline",
+            "label": "CTA Subheadline",
+            "name": "cta_subheadline",
+            "type": "textarea",
+            "rows": 2
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_type",
+                "operator": "==",
+                "value": "front_page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776910000,
+    "active": true,
+    "show_in_rest": 0
+}

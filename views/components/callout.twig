@@ -1,0 +1,40 @@
+{#
+   views/components/callout.twig
+   -------------------------------------------------------------
+   Small attention block with a left border, paper background,
+   and a micro-eyebrow label. Used for "Impact", "Note",
+   "Warning", or any short aside that needs to stand out inside
+   a prose column.
+
+   Params:
+     - eyebrow   : string, optional         — tiny uppercase label.
+     - body      : string (required)        — the main message (plain
+                                              text). Use <blockquote>
+                                              or `<p>` markup inline
+                                              via the `body_html` param
+                                              if you need richer content.
+     - body_html : string, optional         — sanitized HTML; takes
+                                              priority over `body`.
+     - variant   : 'accent' | 'ink'
+                                  (default: 'accent')
+                                            — left-border color. `ink`
+                                              reads as editorial; `accent`
+                                              pops for impact / wins.
+     - class     : string, optional         — extra classes on the
+                                              wrapping `<aside>`.
+#}
+
+{% set _variant = variant|default('accent') %}
+{% set _border_class = _variant == 'ink' ? 'border-ink' : 'border-accent' %}
+
+<aside class="p-lg md:p-xl bg-paper border-l-4 {{ _border_class }} {{ class|default('') }}">
+    {% if eyebrow %}
+        <p class="eyebrow mb-sm">{{ eyebrow }}</p>
+    {% endif %}
+
+    {% if body_html %}
+        <div class="text-body text-ink leading-relaxed">{{ body_html|raw }}</div>
+    {% elseif body %}
+        <p class="text-body text-ink leading-relaxed">{{ body }}</p>
+    {% endif %}
+</aside>

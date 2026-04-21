@@ -1,0 +1,24 @@
+{#
+   views/components/service-card.twig
+   -----------------------------------
+   Mechanical "service" tile from Figma "Service grid: 3 cols, 2px gap".
+
+   Params:
+     - title        : string  — service title
+     - description  : string  — short copy
+     - marker       : string  — small glyph / code (default: '—')
+     - href         : string  — optional link that wraps the entire tile
+     - class        : extra classes on the root
+#}
+{% set _tag = href|default(false) ? 'a' : 'article' %}
+
+<{{ _tag }}
+    class="service-card {{ class|default('') }}"
+    {% if href %}href="{{ href }}"{% endif %}
+>
+    <span class="service-card__marker" aria-hidden="true">
+        {{ marker|default('—') }}
+    </span>
+    <h3 class="service-card__title">{{ title }}</h3>
+    <p class="service-card__copy">{{ description }}</p>
+</{{ _tag }}>

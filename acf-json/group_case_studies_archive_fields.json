@@ -1,0 +1,56 @@
+{
+    "key": "group_case_studies_archive_fields",
+    "title": "Case Studies Archive Settings",
+    "fields": [
+        {
+            "key": "field_csa_tab_hero",
+            "label": "Hero",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_csa_hero_eyebrow",
+            "label": "Eyebrow",
+            "name": "archive_eyebrow",
+            "type": "text",
+            "instructions": "Small uppercase label above the headline.",
+            "placeholder": "Our work",
+            "maxlength": 40
+        },
+        {
+            "key": "field_csa_hero_headline",
+            "label": "Headline",
+            "name": "archive_headline",
+            "type": "text",
+            "instructions": "Page title shown in the archive hero.",
+            "placeholder": "Case Studies"
+        },
+        {
+            "key": "field_csa_hero_lede",
+            "label": "Lede",
+            "name": "archive_lede",
+            "type": "textarea",
+            "instructions": "Short supporting paragraph shown below the headline.",
+            "placeholder": "A selection of the work we're most proud of — from brand strategy to full-stack builds.",
+            "rows": 3
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_slug",
+                "operator": "==",
+                "value": "case-studies"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776920000,
+    "active": true,
+    "show_in_rest": 0
+}

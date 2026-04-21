@@ -1,0 +1,54 @@
+{#
+   views/components/case-study-hero.twig
+   -------------------------------------------------------------
+   Dark ink hero used at the top of a single case study: tag
+   rail (industry + technology) → title → lede. Kept distinct
+   from `components/page-hero.twig` because the tag row is
+   essential to the layout (it sits ABOVE the title, not after
+   an eyebrow) and the headline uses a tighter editorial scale.
+
+   Params:
+     - tags    : array of strings, optional   — tag labels.
+                                                Displayed via `.tag-on-dark`.
+                                                Values are already expected
+                                                to be human-readable; the
+                                                component uppercases them.
+     - title   : string (required)            — case-study title.
+     - lede    : string, optional             — supporting paragraph
+                                                (appears as `.lede`, auto
+                                                contrast-corrected on dark).
+#}
+
+{#
+   `section-dark` is the canonical dark-surface utility. Rewires
+   context tokens (`.lede`, `.eyebrow`, `<em>`/`<strong>` in
+   headings, focus ring) for AA contrast on ink. Never swap for
+   raw `bg-ink text-white` — lede color fix lives under the
+   `.section-dark .lede` selector (see `src/css/main.css`).
+#}
+<section class="section-dark relative -mt-20 pt-20">
+    <div class="absolute inset-0 bg-dot-grid-light opacity-20 pointer-events-none"></div>
+
+    <div class="container-snz relative pt-lg md:pt-xl pb-xl md:pb-2xl">
+        <div class="max-w-4xl">
+
+            {% if tags and tags|length > 0 %}
+                <div class="flex flex-wrap gap-xs mb-lg">
+                    {% for tag in tags %}
+                        <span class="tag-on-dark">{{ tag|upper }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <h1 class="mb-md
+                       text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem]
+                       leading-[1.05] tracking-[-0.02em]">
+                {{ title }}
+            </h1>
+
+            {% if lede %}
+                <p class="lede max-w-2xl">{{ lede }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>

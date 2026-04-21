@@ -1,0 +1,77 @@
+---
+description: Timber 2.x + Twig 3 gotchas (avoid fatals on boot and render)
+globs: **/*.php,**/*.twig
+alwaysApply: false
+---
+
+# Timber 2.x & Twig 3 — Guardrails
+
+The theme ships **Timber 2.4** via Composer (`vendor/timber/timber`).
+History: mixing it with the `timber-library` WP.org plugin (Timber 1.x) and
+over-aggressive Twig filter registration caused two critical-error fatals.
+These rules keep it stable.
+
+## 1 — Never install the Timber 1.x plugin
+
+Keep `.wp-env.json` plugins to ACF + Contact Form 7. If `timber-library`
+sneaks in, `Timber\Timber::init()` resolves to the **protected** 1.x method
+and every page 500s. `functions.php` has a guard that surfaces an admin
+notice, but the fix is to remove the plugin:
+
+```bash
+npm run wp:cli -- plugin deactivate timber-library.latest-stable
+npx wp-env run cli -- rm -rf /var/www/html/wp-content/plugins/timber-library.latest-stable
+```
+
+## 2 — Controller → Twig pattern
+
+```php
+// archive-case_study.php
+$context = Timber::context();
+$context['posts'] = Timber::get_posts();
+Timber::render( 'archive-case_study.twig', $context );
+```
+
+Templates live in `views/` and `views/partials/` (search path set in
+`functions.php`). Keep PHP files skinny; put reusable logic in `src/`.
+
+## 3 — Registering Twig filters / functions (the tricky one)
+
+`timber/twig` can fire more than once per request. Twig 3 throws
+`LogicException` if:
+- a filter/function name is re-registered, **or**
+- the `Environment`'s extensions are already initialized (e.g. because
+  something called `getFilter()` / `getFunction()` on it).
+
+✅ Correct pattern — register once, swallow re-registration safely:
+
+```php
+add_filter( 'timber/twig', function ( \Twig\Environment $twig ) {
+    try {
+        $twig->addFilter( new \Twig\TwigFilter( 'excerpt', /* fn */ ) );
+    } catch ( \LogicException $e ) {
+        // already registered or extensions frozen — no-op
+    }
+    return $twig;
+} );
+```
+
+❌ Wrong — these cause the fatals we already fixed:
+
+```php
+if ( null === $twig->getFilter( 'excerpt' ) ) { ... }   // freezes extensions
+$twig->addFilter( new \Twig\TwigFilter( 'truncate', ... ) ); // clashes with Timber's
+static $registered = false; if ( $registered ) return;   // unreliable across contexts
+```
+
+## 4 — Naming
+
+Use bespoke filter names (`excerpt`, not `truncate`) so they never collide
+with Timber or `twig/extra` built-ins (`truncate`, `length`, `u.*`, etc.).
+
+## 5 — Twig authoring
+
+- Timber context helpers: `{{ post.title }}`, `{{ post.thumbnail.src('hero-image') }}`.
+- Menus come from `{{ menu_primary.items }}` / `{{ menu_footer.items }}`.
+- Global ACF options live at `{{ options.phone }}`, `{{ options.social_linkedin }}`, etc.
+- Escape by default; mark HTML-safe helpers with `is_safe: ['html']` (see `icon()`).

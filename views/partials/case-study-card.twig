@@ -1,0 +1,82 @@
+{# ===== Case Study Card =====
+   Used on: Homepage (featured), Archive (listing).
+   Expects: `study` — a Timber\Post of type case_study.
+
+   Visual spec (Figma):
+   - 3:2 cover image (or tonal placeholder) at top
+   - Industry + technology tags below
+   - Title, short excerpt
+   - "Read Case Study →" link in accent-dim
+#}
+
+{# Deterministic placeholder tone per-slug so the grid feels
+   intentional when thumbnails aren't set yet. #}
+{% set placeholder_tones = [
+    'bg-gradient-to-br from-brand-teal to-ink-mid',
+    'bg-gradient-to-br from-slate to-ink',
+    'bg-gradient-to-br from-accent-dim to-ink-light',
+    'bg-gradient-to-br from-steel to-ink',
+    'bg-gradient-to-br from-brand-navy to-slate'
+] %}
+{% set tone = placeholder_tones[(study.ID|default(0)) % 5] %}
+
+<article class="card group flex flex-col h-full">
+
+    {# ---- Thumbnail ---- #}
+    <a href="{{ study.link }}" class="block relative aspect-[3/2] overflow-hidden no-underline">
+        {% if study.thumbnail %}
+            <img
+                src="{{ study.thumbnail.src('card-thumbnail') }}"
+                alt="{{ study.thumbnail.alt ?: study.title }}"
+                class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                loading="lazy"
+            >
+        {% else %}
+            <div class="w-full h-full {{ tone }} flex items-center justify-center relative">
+                <span class="font-display font-semibold text-white/70 text-label uppercase tracking-[0.18em]">
+                    Project Image · 800×533
+                </span>
+                <div class="absolute inset-0 bg-dot-grid-light opacity-40"></div>
+            </div>
+        {% endif %}
+    </a>
+
+    {# ---- Body ---- #}
+    <div class="card-body flex-1 flex flex-col">
+
+        {# Taxonomy tags #}
+        <div class="flex flex-wrap gap-xs mb-md">
+            {% for term in study.terms('industry') %}
+                <span class="tag-industry">{{ term.name }}</span>
+            {% endfor %}
+            {% for term in study.terms('technology') %}
+                <span class="tag-technology">{{ term.name }}</span>
+            {% endfor %}
+        </div>
+
+        {# Title #}
+        <h3 class="mb-sm">
+            <a href="{{ study.link }}" class="text-ink hover:text-accent-dim transition-colors no-underline">
+                {{ study.title }}
+            </a>
+        </h3>
+
+        {# Excerpt #}
+        {% if study.preview %}
+            <p class="text-small text-ink-mid leading-relaxed line-clamp-3 mb-md">
+                {{ study.preview.length(140).read_more('') }}
+            </p>
+        {% endif %}
+
+        {# Read more #}
+        <a href="{{ study.link }}"
+           class="mt-auto inline-flex items-center gap-xs
+                  font-display font-bold text-label uppercase tracking-[0.14em]
+                  text-accent-dim hover:text-accent-bright transition-colors no-underline">
+            Read Case Study
+            <svg class="w-3.5 h-3.5 btn-arrow" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" d="M5 12h14m-6-6 6 6-6 6"/>
+            </svg>
+        </a>
+    </div>
+</article>

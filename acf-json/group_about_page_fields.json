@@ -1,0 +1,216 @@
+{
+    "key": "group_about_page_fields",
+    "title": "About Page Settings",
+    "fields": [
+        {
+            "key": "field_ab_tab_hero",
+            "label": "Hero",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_ab_hero_eyebrow",
+            "label": "Eyebrow",
+            "name": "about_eyebrow",
+            "type": "text",
+            "instructions": "Small uppercase label above the headline.",
+            "placeholder": "About us",
+            "maxlength": 40
+        },
+        {
+            "key": "field_ab_hero_headline",
+            "label": "Headline",
+            "name": "about_headline",
+            "type": "textarea",
+            "instructions": "Wrap a word in <code>&lt;em&gt;</code> to highlight it in accent green. Use <code>&lt;br&gt;</code> to force a line break.",
+            "placeholder": "We're the team behind your next big launch",
+            "rows": 3,
+            "new_lines": ""
+        },
+        {
+            "key": "field_ab_hero_subheadline",
+            "label": "Subheadline",
+            "name": "about_subheadline",
+            "type": "textarea",
+            "instructions": "Supporting copy below the headline.",
+            "rows": 3
+        },
+
+        {
+            "key": "field_ab_tab_story",
+            "label": "Our Story",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_ab_story_eyebrow",
+            "label": "Eyebrow",
+            "name": "story_eyebrow",
+            "type": "text",
+            "placeholder": "Our story",
+            "maxlength": 40
+        },
+        {
+            "key": "field_ab_story_headline",
+            "label": "Headline",
+            "name": "story_headline",
+            "type": "text",
+            "placeholder": "From side project to full-service agency"
+        },
+        {
+            "key": "field_ab_story_content",
+            "label": "Content",
+            "name": "story_content",
+            "type": "wysiwyg",
+            "instructions": "Two or three short paragraphs about the origin of the studio.",
+            "media_upload": 0,
+            "toolbar": "basic",
+            "tabs": "visual"
+        },
+        {
+            "key": "field_ab_story_image",
+            "label": "Image",
+            "name": "story_image",
+            "type": "image",
+            "instructions": "Team / studio photo. Recommended size: 1120×780.",
+            "return_format": "array",
+            "preview_size": "medium"
+        },
+
+        {
+            "key": "field_ab_tab_values",
+            "label": "Values",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_ab_values_eyebrow",
+            "label": "Eyebrow",
+            "name": "values_eyebrow",
+            "type": "text",
+            "placeholder": "Our values",
+            "maxlength": 40
+        },
+        {
+            "key": "field_ab_values_headline",
+            "label": "Headline",
+            "name": "values_headline",
+            "type": "text",
+            "placeholder": "What drives every decision"
+        },
+        {
+            "key": "field_ab_values",
+            "label": "Values",
+            "name": "values",
+            "type": "repeater",
+            "instructions": "Four short statements that guide every project.",
+            "min": 0,
+            "max": 4,
+            "layout": "block",
+            "button_label": "Add Value",
+            "sub_fields": [
+                {
+                    "key": "field_ab_value_title",
+                    "label": "Title",
+                    "name": "value_title",
+                    "type": "text",
+                    "required": 1
+                },
+                {
+                    "key": "field_ab_value_description",
+                    "label": "Description",
+                    "name": "value_description",
+                    "type": "textarea",
+                    "rows": 3,
+                    "required": 1
+                }
+            ]
+        },
+
+        {
+            "key": "field_ab_tab_team",
+            "label": "Team",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_ab_team_eyebrow",
+            "label": "Eyebrow",
+            "name": "team_eyebrow",
+            "type": "text",
+            "placeholder": "The team",
+            "maxlength": 40
+        },
+        {
+            "key": "field_ab_team_headline",
+            "label": "Headline",
+            "name": "team_headline",
+            "type": "text",
+            "placeholder": "Meet the people behind the pixels"
+        },
+        {
+            "key": "field_ab_team_subheadline",
+            "label": "Subheadline",
+            "name": "team_subheadline",
+            "type": "textarea",
+            "rows": 2
+        },
+
+        {
+            "key": "field_ab_tab_join",
+            "label": "Join CTA",
+            "name": "",
+            "type": "tab",
+            "placement": "top"
+        },
+        {
+            "key": "field_ab_join_headline",
+            "label": "Headline",
+            "name": "join_headline",
+            "type": "text",
+            "placeholder": "Want to join the team?"
+        },
+        {
+            "key": "field_ab_join_lede",
+            "label": "Lede",
+            "name": "join_lede",
+            "type": "textarea",
+            "rows": 2
+        },
+        {
+            "key": "field_ab_join_button_label",
+            "label": "Button Label",
+            "name": "join_button_label",
+            "type": "text",
+            "placeholder": "View Open Positions"
+        },
+        {
+            "key": "field_ab_join_button_url",
+            "label": "Button URL",
+            "name": "join_button_url",
+            "type": "url",
+            "placeholder": "https://"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_slug",
+                "operator": "==",
+                "value": "about"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776920000,
+    "active": true,
+    "show_in_rest": 0
+}

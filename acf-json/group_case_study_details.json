@@ -1,0 +1,114 @@
+{
+    "key": "group_case_study_details",
+    "title": "Case Study Details",
+    "fields": [
+        {
+            "key": "field_cs_overview",
+            "label": "Project Overview",
+            "name": "project_overview",
+            "type": "textarea",
+            "instructions": "A concise summary of the project (2-3 sentences). Shown above the main content.",
+            "rows": 3,
+            "new_lines": "wpautop"
+        },
+        {
+            "key": "field_cs_client_name",
+            "label": "Client Name",
+            "name": "client_name",
+            "type": "text",
+            "instructions": "The client or company name."
+        },
+        {
+            "key": "field_cs_project_year",
+            "label": "Project Year",
+            "name": "project_year",
+            "type": "text",
+            "instructions": "e.g. 2025 or 2024–2025",
+            "placeholder": "2025"
+        },
+        {
+            "key": "field_cs_project_duration",
+            "label": "Project Duration",
+            "name": "project_duration",
+            "type": "text",
+            "instructions": "e.g. '6 weeks' or '3 months'",
+            "placeholder": "8 weeks"
+        },
+        {
+            "key": "field_cs_project_url",
+            "label": "Live Project URL",
+            "name": "project_url",
+            "type": "url",
+            "instructions": "Link to the live site or app (optional)."
+        },
+        {
+            "key": "field_cs_project_services",
+            "label": "Services Delivered",
+            "name": "project_services",
+            "type": "text",
+            "instructions": "Comma-separated list shown in the meta row. e.g. 'Design, Development, Strategy'",
+            "placeholder": "Design, Development, Strategy"
+        },
+        {
+            "key": "field_cs_project_gallery",
+            "label": "Project Gallery",
+            "name": "project_gallery",
+            "type": "gallery",
+            "instructions": "Upload screenshots, mockups, or photos of the project.",
+            "return_format": "id",
+            "library": "all",
+            "min": 0,
+            "max": 12,
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_cs_results",
+            "label": "Results",
+            "name": "project_results",
+            "type": "textarea",
+            "instructions": "Key outcomes or metrics from the project.",
+            "rows": 3,
+            "new_lines": "wpautop"
+        },
+        {
+            "key": "field_cs_testimonial",
+            "label": "Client Testimonial",
+            "name": "client_testimonial",
+            "type": "textarea",
+            "instructions": "A quote from the client about working with Snazzy Sprocket.",
+            "rows": 3
+        },
+        {
+            "key": "field_cs_testimonial_author",
+            "label": "Testimonial Author",
+            "name": "testimonial_author",
+            "type": "text",
+            "instructions": "Name and title of the person quoted. e.g. 'Jane Doe, CEO at Acme'",
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_cs_testimonial",
+                        "operator": "!=empty"
+                    }
+                ]
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "case_study"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776910000,
+    "active": true,
+    "show_in_rest": 0
+}

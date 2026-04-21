@@ -1,0 +1,45 @@
+{
+    "key": "group_contact_page_fields",
+    "title": "Contact Page Settings",
+    "fields": [
+        {
+            "key": "field_contact_headline",
+            "label": "Page Headline",
+            "name": "contact_headline",
+            "type": "text",
+            "placeholder": "Let's start something great."
+        },
+        {
+            "key": "field_contact_subheadline",
+            "label": "Page Subheadline",
+            "name": "contact_subheadline",
+            "type": "textarea",
+            "rows": 2
+        },
+        {
+            "key": "field_contact_form_shortcode",
+            "label": "Contact Form Shortcode",
+            "name": "contact_form_shortcode",
+            "type": "text",
+            "instructions": "Paste a Contact Form 7 shortcode here. e.g. [contact-form-7 id=\"123\" title=\"Contact\"]",
+            "placeholder": "[contact-form-7 id=\"123\" title=\"Contact\"]"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_slug",
+                "operator": "==",
+                "value": "contact"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "modified": 1776920000,
+    "active": true,
+    "show_in_rest": 0
+}

@@ -1,0 +1,104 @@
+{#
+   views/components/home-hero.twig
+   -------------------------------------------------------------
+   Marketing-grade homepage hero — a 2-column ink block with a
+   copy rail on the left and a vertical stack of stat cards on
+   the right. Distinct from `components/page-hero.twig`, which
+   is the single-column narrative hero used on interior pages.
+
+   Kept as its own component (instead of folding it into
+   page-hero) because the geometry is fundamentally different:
+     - 12-column grid (8 / 4) vs single centered column
+     - Marquee headline (text-[5.25rem]) vs hero-headline default
+     - Halo originates bottom-left, not top-right
+     - Includes a button-pair and a stats aside
+
+   Params:
+     - eyebrow        : string, optional                — small uppercase label.
+     - heading        : string                          — plain-text headline.
+     - heading_html   : string, optional                — sanitized HTML (takes
+                                                          priority over
+                                                          `heading`).
+     - lede           : string, optional                — supporting paragraph.
+
+     - primary_cta    : { label, href }, optional       — solid accent button.
+     - secondary_cta  : { label, href }, optional       — outline-on-dark button.
+
+     - stats          : array of { stat_value, stat_label }, optional
+                                                        — renders the right
+                                                          sidebar stack using
+                                                          `components/stat-card.twig`.
+
+     - halo           : bool          (default: true)   — bottom-left radial
+                                                          accent glow.
+#}
+
+{% set _halo = halo is defined ? halo : true %}
+
+<section class="relative bg-hero-dot text-white overflow-hidden -mt-20 pt-20">
+
+    {% if _halo %}
+        <div class="pointer-events-none absolute -left-40 -bottom-40 w-[560px] h-[560px] bg-accent-halo opacity-70"></div>
+    {% endif %}
+
+    <div class="container-snz relative pt-md md:pt-xl lg:pt-2xl pb-2xl md:pb-3xl lg:pb-4xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-xl lg:gap-2xl items-start">
+
+            {# ---- Copy rail (8 / 12) ---- #}
+            <div class="lg:col-span-8">
+                {% if eyebrow %}
+                    <p class="eyebrow mb-md animate-fade-in">{{ eyebrow }}</p>
+                {% endif %}
+
+                {% if heading_html or heading %}
+                    <h1 class="hero-headline text-white mb-lg animate-slide-up
+                               text-4xl sm:text-5xl md:text-6xl lg:text-[5.25rem]
+                               leading-[1.05] md:leading-[1.02] tracking-[-0.02em]">
+                        {% if heading_html %}{{ heading_html|raw }}{% else %}{{ heading }}{% endif %}
+                    </h1>
+                {% endif %}
+
+                {% if lede %}
+                    <p class="lede max-w-xl mb-xl animate-slide-up" style="animation-delay: 0.15s">
+                        {{ lede }}
+                    </p>
+                {% endif %}
+
+                {% if primary_cta or secondary_cta %}
+                    <div class="flex flex-wrap gap-md animate-slide-up" style="animation-delay: 0.3s">
+                        {% if primary_cta %}
+                            {% include 'components/button.twig' with {
+                                label:   primary_cta.label,
+                                href:    primary_cta.href,
+                                variant: 'primary'
+                            } only %}
+                        {% endif %}
+
+                        {% if secondary_cta %}
+                            {% include 'components/button.twig' with {
+                                label:   secondary_cta.label,
+                                href:    secondary_cta.href,
+                                variant: 'outline-on-dark',
+                                arrow:   false
+                            } only %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {# ---- Stats rail (4 / 12) ---- #}
+            {% if stats and stats|length > 0 %}
+                <aside class="lg:col-span-4 w-full flex flex-col gap-md animate-slide-up"
+                       style="animation-delay: 0.45s"
+                       aria-label="Agency stats">
+                    {% for stat in stats %}
+                        {% include 'components/stat-card.twig' with {
+                            value: stat.stat_value,
+                            label: stat.stat_label
+                        } only %}
+                    {% endfor %}
+                </aside>
+            {% endif %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,61 @@
+---
+description: Snazzy Sprocket WordPress theme — stack, commands, mental model
+alwaysApply: true
+---
+
+# Snazzy Sprocket — Project Overview
+
+Custom WordPress theme for the Snazzy Sprocket agency. MVC separation via
+Timber/Twig, styled with Tailwind, content modeled with ACF.
+
+## Stack
+
+| Layer          | Tool                                  |
+|----------------|---------------------------------------|
+| Templating     | Timber **2.x** (Composer) + Twig 3    |
+| Styles         | Tailwind 3 + custom tokens            |
+| JS             | Alpine.js 3                           |
+| Build          | Vite 5 → `dist/` + `manifest.json`    |
+| Local env      | `@wordpress/env` (Docker), port 8888  |
+| Plugins        | ACF, Contact Form 7 (only these)      |
+
+## First-time setup
+
+```bash
+composer install     # installs Timber 2.x into vendor/
+npm install
+npm run build        # required: enqueue reads dist/.vite/manifest.json
+npm run wp:start     # http://localhost:8888  (admin / password)
+```
+
+## Day-to-day
+
+```bash
+npm run wp:start              # start WP
+npx vite build --watch        # recompile CSS/JS on save
+npm run wp:cli -- <wp-cli>    # e.g. `user list`, `plugin list`
+```
+
+## Hard rules
+
+1. **Do NOT install the `timber-library` plugin.** That is Timber 1.x and
+   shadows the Composer-installed Timber 2.x, producing a protected-method
+   fatal on boot. Timber ships with the theme via Composer.
+2. **Production assets come from `dist/`.** Run `npm run build` (or vite
+   watch) before loading the site or no CSS/JS will render.
+3. **ACF field groups live in `acf-json/`** and sync automatically — edit
+   them in the admin and commit the JSON.
+4. **PHP controllers are thin.** `*.php` files in theme root gather data →
+   `Timber::render('*.twig', $context)`. Logic lives in `src/` (PSR-4
+   namespace `SnazzySprocket\`).
+
+## Key paths
+
+- `functions.php`              — bootstrap (autoload + Timber init)
+- `src/StarterSite.php`        — theme class: hooks, context, assets, Twig
+- `src/PostTypes/*`            — Case Study, Team Member CPTs
+- `src/Taxonomies/*`           — Industry, Technology
+- `views/**/*.twig`            — templates (search path: `views`, `views/partials`)
+- `src/css/main.css`           — Tailwind entry + design tokens
+- `tailwind.config.js`         — Figma tokens source of truth
+- `.wp-env.json`               — local env config

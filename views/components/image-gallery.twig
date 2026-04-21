@@ -1,0 +1,59 @@
+{#
+   views/components/image-gallery.twig
+   -------------------------------------------------------------
+   Responsive image grid. Accepts either raw attachment IDs
+   (auto-hydrated via `TimberImage()`) or Timber `Image` objects.
+   Defaults to a 2-column grid on md+; override with `cols`.
+
+   Params:
+     - images        : array (required)       — attachment IDs or Image
+                                                objects. Mixed arrays are
+                                                fine — the component
+                                                resolves each item.
+     - eyebrow       : string, optional       — section-header eyebrow.
+     - heading       : string, optional       — section-header headline.
+     - cols          : 1 | 2 | 3    (default: 2)
+                                              — grid columns on md+.
+     - size          : string      (default: 'large')
+                                              — Timber image size.
+     - alt_fallback  : string, optional       — alt text fallback when
+                                                the image has no alt
+                                                (e.g. the post title).
+     - class         : string, optional       — extra classes on the
+                                                outer `<section>`.
+#}
+
+{% set _cols  = cols|default(2) %}
+{% set _size  = size|default('large') %}
+
+{% set _grid_class = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 md:grid-cols-2',
+    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+}[_cols]|default('grid-cols-1 md:grid-cols-2') %}
+
+<section class="bg-white {{ class|default('') }}">
+    <div class="container-snz">
+        {% if eyebrow or heading %}
+            {% include 'components/section-header.twig' with {
+                eyebrow: eyebrow,
+                heading: heading,
+                class:   'max-w-3xl'
+            } only %}
+        {% endif %}
+
+        <div class="grid {{ _grid_class }} gap-md">
+            {% for item in images %}
+                {# Resolve to a Timber Image regardless of input type. #}
+                {% set image = item.src is defined ? item : TimberImage(item) %}
+
+                <img
+                    src="{{ image.src(_size) }}"
+                    alt="{{ image.alt ?: alt_fallback|default('') }}"
+                    class="w-full block"
+                    loading="lazy"
+                >
+            {% endfor %}
+        </div>
+    </div>
+</section>
