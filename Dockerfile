@@ -90,13 +90,22 @@ COPY --from=assets --chown=www-data:www-data /build/dist \
 COPY --from=vendor --chown=www-data:www-data /build/vendor \
     /var/www/html/wp-content/themes/snazzy-sprocket/vendor
 
-# Drop build-only files from inside the theme dir.
+# Drop build-only files from inside the theme dir. We KEEP `bin/seed.sh`
+# in the image so ops can run `bash bin/seed.sh` from Railway's shell
+# to populate a fresh database with demo content.
 RUN set -eux; \
     cd /var/www/html/wp-content/themes/snazzy-sprocket; \
     rm -rf Dockerfile .dockerignore .wp-env.json .github .gitignore \
            docker node_modules package.json package-lock.json \
            postcss.config.js tailwind.config.js vite.config.js \
-           bin/seed.sh README.md
+           README.md
+
+# Expose the seed script under a friendly alias on PATH so it can be
+# invoked as just `snazzy-seed` from `railway ssh`.
+RUN set -eux; \
+    ln -sf /var/www/html/wp-content/themes/snazzy-sprocket/bin/seed.sh \
+        /usr/local/bin/snazzy-seed; \
+    chmod +x /var/www/html/wp-content/themes/snazzy-sprocket/bin/seed.sh
 
 # Custom `wp-config.php` reads DB + salts from env vars and trusts
 # Railway's TLS-terminating edge proxy.
