@@ -49,7 +49,12 @@ ENV NGINX_WEBROOT=/var/www/html \
 
 USER root
 
+# serversideup ships `pdo_mysql` + `mysqlnd` but NOT the `mysqli`
+# extension, and WordPress explicitly requires `mysqli` (see
+# `wp-includes/class-wpdb.php`). `install-php-extensions` is baked
+# into every serversideup image for exactly this purpose.
 RUN set -eux; \
+    install-php-extensions mysqli; \
     apt-get update; \
     apt-get install -y --no-install-recommends unzip curl less; \
     rm -rf /var/lib/apt/lists/*
