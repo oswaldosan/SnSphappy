@@ -90,7 +90,13 @@ RUN set -eux; \
         vite.config.js \
         bin/seed.sh
 
-RUN a2enmod rewrite headers expires
+# Force a single MPM (mod_php needs prefork). Some base image layers
+# leave both `mpm_event` AND `mpm_prefork` enabled, which makes Apache
+# bail with `AH00534: apache2: Configuration error: More than one MPM
+# loaded.` on startup — especially under Railway's runtime.
+RUN set -eux; \
+    a2dismod mpm_event mpm_worker 2>/dev/null || true; \
+    a2enmod mpm_prefork rewrite headers expires
 
 COPY docker/railway-entrypoint.sh /usr/local/bin/railway-entrypoint.sh
 RUN chmod +x /usr/local/bin/railway-entrypoint.sh
