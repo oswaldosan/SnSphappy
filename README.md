@@ -2,6 +2,8 @@
 
 A production-grade custom WordPress theme for **Snazzy Sprocket**, a fictional design and development agency. Built with **Timber/Twig**, **Tailwind CSS**, **ACF**, **Alpine.js**, and shipped with a Dockerfile for one-click **Railway** deployment.
 
+**🔗 Live preview:** <https://snsphappy-production.up.railway.app/>
+
 WordPress PHP Tailwind Timber Railway
 
 ---
