@@ -90,13 +90,30 @@ RUN set -eux; \
         vite.config.js \
         bin/seed.sh
 
-# Force a single MPM (mod_php needs prefork). Some base image layers
-# leave both `mpm_event` AND `mpm_prefork` enabled, which makes Apache
-# bail with `AH00534: apache2: Configuration error: More than one MPM
-# loaded.` on startup — especially under Railway's runtime.
+# Force a single MPM (mod_php needs prefork). The `wordpress:php8.2-apache`
+# base image ships with BOTH `mpm_event` and `mpm_prefork` symlinked into
+# `mods-enabled/` → Apache bails at startup with
+# `AH00534: apache2: Configuration error: More than one MPM loaded.`
+#
+# `a2dismod` is not reliable here because the base image enables the
+# modules via plain filesystem symlinks that `a2enmod/a2dismod` sometimes
+# re-create. Manage the symlinks directly and then fail the build if
+# more than one MPM remains enabled.
 RUN set -eux; \
-    a2dismod mpm_event mpm_worker 2>/dev/null || true; \
-    a2enmod mpm_prefork rewrite headers expires
+    rm -f /etc/apache2/mods-enabled/mpm_event.load \
+          /etc/apache2/mods-enabled/mpm_event.conf \
+          /etc/apache2/mods-enabled/mpm_worker.load \
+          /etc/apache2/mods-enabled/mpm_worker.conf; \
+    ln -sf ../mods-available/mpm_prefork.load \
+           /etc/apache2/mods-enabled/mpm_prefork.load; \
+    ln -sf ../mods-available/mpm_prefork.conf \
+           /etc/apache2/mods-enabled/mpm_prefork.conf; \
+    a2enmod rewrite headers expires; \
+    echo "---- Enabled MPM modules ----"; \
+    ls -la /etc/apache2/mods-enabled/mpm_*.load; \
+    count="$(ls /etc/apache2/mods-enabled/mpm_*.load 2>/dev/null | wc -l)"; \
+    [ "$count" = "1" ] || { echo "ERROR: expected exactly 1 MPM, got $count"; exit 1; }; \
+    apache2ctl -t
 
 COPY docker/railway-entrypoint.sh /usr/local/bin/railway-entrypoint.sh
 RUN chmod +x /usr/local/bin/railway-entrypoint.sh
