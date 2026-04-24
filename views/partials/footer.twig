@@ -8,17 +8,17 @@
 
 {# ---- Data fallbacks ----------------------------------------- #}
 {% set footer_company = menu_footer ? menu_footer.items : [
-    { title: 'About',        link: home_url ~ '/about' },
-    { title: 'Case Studies', link: home_url ~ '/case-studies' },
-    { title: 'Contact',      link: home_url ~ '/contact' },
-    { title: 'Careers',      link: home_url ~ '/careers' }
+    { title: 'About',        link: function('home_url') ~ '/about' },
+    { title: 'Case Studies', link: function('home_url') ~ '/case-studies' },
+    { title: 'Contact',      link: function('home_url') ~ '/contact' },
+    { title: 'Careers',      link: function('home_url') ~ '/careers' }
 ] %}
 
 {% set footer_services = options.footer_services|default([
-    { title: 'Web Design',  link: home_url ~ '/services/web-design' },
-    { title: 'Development', link: home_url ~ '/services/development' },
-    { title: 'SEO',         link: home_url ~ '/services/seo' },
-    { title: 'Hosting',     link: home_url ~ '/services/hosting' }
+    { title: 'Web Design',  link: function('home_url') ~ '/services/web-design' },
+    { title: 'Development', link: function('home_url') ~ '/services/development' },
+    { title: 'SEO',         link: function('home_url') ~ '/services/seo' },
+    { title: 'Hosting',     link: function('home_url') ~ '/services/hosting' }
 ]) %}
 
 {% set footer_connect = [
@@ -29,8 +29,8 @@
 ] %}
 
 {% set legal_links = [
-    { title: 'Privacy Policy',   link: home_url ~ '/privacy-policy' },
-    { title: 'Terms of Service', link: home_url ~ '/terms-of-service' }
+    { title: 'Privacy Policy',   link: function('home_url') ~ '/privacy-policy' },
+    { title: 'Terms of Service', link: function('home_url') ~ '/terms-of-service' }
 ] %}
 
 <footer class="bg-ink text-cloud">
@@ -42,7 +42,7 @@
             {# ---- Column 1 — Brand (4/12) ---- #}
             <div class="md:col-span-4">
                 {% include 'components/logo.twig' with {
-                    href:  home_url,
+                    href:  function('home_url'),
                     size:  'md',
                     class: 'mb-md'
                 } only %}
