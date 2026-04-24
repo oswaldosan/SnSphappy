@@ -144,6 +144,7 @@ class StarterSite extends Site {
         // Site info
         $context['site']         = $this;
         $context['current_year'] = date( 'Y' );
+        $context['home_url']     = home_url();
 
         // Theme asset URL — reliable across Timber versions; prefer this
         // over `site.theme.link` inside Twig templates when you need to
@@ -220,6 +221,7 @@ class StarterSite extends Site {
         // context is intentionally blocked.
         try {
             $twig->addGlobal( 'theme_url', get_stylesheet_directory_uri() );
+            $twig->addGlobal( 'home_url',  home_url() );
         } catch ( \LogicException $e ) {
             // Environment frozen — safe to ignore.
         }

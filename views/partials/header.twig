@@ -36,10 +36,10 @@
 
         {# ---- Logo ----
            Pass `href` explicitly — the `only` keyword scopes the include
-           so `site.url` (the component's fallback) isn't reachable from
+           so `home_url` (the component's fallback) isn't reachable from
            here, which silently rendered an empty `href=""`. #}
         {% include 'components/logo.twig' with {
-            href:           site.url,
+            href:           home_url,
             size:           'md',
             wordmark_class: 'text-white hidden sm:block'
         } only %}
@@ -57,9 +57,9 @@
                     </a>
                 {% endfor %}
             {% else %}
-                <a href="{{ site.url }}" class="nav-link nav-link-on-dark is-current">Home</a>
-                <a href="{{ site.url }}/about" class="nav-link nav-link-on-dark">About</a>
-                <a href="{{ site.url }}/case-studies" class="nav-link nav-link-on-dark">Case Studies</a>
+                <a href="{{ home_url }}" class="nav-link nav-link-on-dark is-current">Home</a>
+                <a href="{{ home_url }}/about" class="nav-link nav-link-on-dark">About</a>
+                <a href="{{ home_url }}/case-studies" class="nav-link nav-link-on-dark">Case Studies</a>
             {% endif %}
         </nav>
 
@@ -67,7 +67,7 @@
         <div class="flex items-center gap-md">
             {% include 'components/button.twig' with {
                 label:   'Get in Touch',
-                href:    site.url ~ '/contact',
+                href:    home_url ~ '/contact',
                 variant: 'primary',
                 arrow:   false,
                 class:   'hidden md:inline-flex'
@@ -108,9 +108,9 @@
                 {% set mobile_items = menu_primary
                     ? menu_primary.items
                     : [
-                        { title: 'Home',         link: site.url,                   current: true  },
-                        { title: 'About',        link: site.url ~ '/about',        current: false },
-                        { title: 'Case Studies', link: site.url ~ '/case-studies', current: false }
+                        { title: 'Home',         link: home_url,                   current: true  },
+                        { title: 'About',        link: home_url ~ '/about',        current: false },
+                        { title: 'Case Studies', link: home_url ~ '/case-studies', current: false }
                       ]
                 %}
                 {% for item in mobile_items %}
@@ -136,7 +136,7 @@
             <div class="mt-xl pt-lg border-t border-white/10">
                 {% include 'components/button.twig' with {
                     label:      'Get in Touch',
-                    href:       site.url ~ '/contact',
+                    href:       home_url ~ '/contact',
                     variant:    'primary',
                     arrow:      false,
                     full_width: true,
